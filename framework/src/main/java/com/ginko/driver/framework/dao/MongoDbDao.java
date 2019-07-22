@@ -1,4 +1,4 @@
-package com.ginko.driver.freamwork.dao;
+package com.ginko.driver.framework.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

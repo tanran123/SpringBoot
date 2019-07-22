@@ -16,6 +16,6 @@ public class TestController {
 
     @RequestMapping(value = "/getUserInfo",method = RequestMethod.POST)
     public MsgConfig getUserInfo(){
-       return new MsgConfig(200,"返回成功",200);
+       return new MsgConfig("200","返回成功",200);
     }
 }

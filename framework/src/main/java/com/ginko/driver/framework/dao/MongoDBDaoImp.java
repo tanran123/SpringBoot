@@ -1,6 +1,6 @@
-package com.ginko.driver.freamwork.dao;
+package com.ginko.driver.framework.dao;
 
-import com.ginko.driver.freamwork.entity.BoxEntity;
+import com.ginko.driver.framework.entity.BoxEntity;
 import org.springframework.stereotype.Repository;
 
 

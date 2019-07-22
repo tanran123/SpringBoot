@@ -1,4 +1,4 @@
-package com.ginko.driver.freamwork.entity;
+package com.ginko.driver.framework.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
