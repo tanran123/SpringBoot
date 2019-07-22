@@ -1,7 +1,7 @@
 package com.ginko.driver.api;
 
-import com.ginko.driver.freamwork.dao.MongoDBDaoImp;
-import com.ginko.driver.freamwork.entity.BoxEntity;
+import com.ginko.driver.framework.dao.MongoDBDaoImp;
+import com.ginko.driver.framework.entity.BoxEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

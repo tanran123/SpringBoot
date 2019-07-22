@@ -20,7 +20,7 @@
     <modules>
         <module>api</module>    <!--接口-->
         <module>common</module> <!--公共类-->
-        <module>freamwork</module>  <!--框架相关-->
+        <module>framework</module>  <!--框架相关-->
         <module>service</module>    <!--业务相关-->
     </modules>
 
