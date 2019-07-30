@@ -1,5 +1,6 @@
 package com.ginko.driver.api;
 
+import com.ginko.driver.framework.dao.MongoDBBoxDaoImp;
 import com.ginko.driver.framework.dao.MongoDBDaoImp;
 import com.ginko.driver.framework.entity.BoxEntity;
 import org.junit.Test;
@@ -21,15 +22,15 @@ public class ApiApplicationTests {
 
 
     @Autowired
-    private MongoDBDaoImp mongoDBDaoImp;
+    private MongoDBBoxDaoImp mongoDBDaoImp;
 
     @Test
     public void saveObj() {
 
-        for (int i = 1000000; i < 2000000; i++) {
+        for (int i = 2000000; i < 2003000; i++) {
             BoxEntity book = new BoxEntity();
-            book.setUserName("tran");
-            book.setMsg("我很帅" + i);
+            book.setUserName(String.valueOf(i));
+            book.setMsg("我很帅");
             mongoDBDaoImp.save(book);
         }
     }
@@ -37,12 +38,7 @@ public class ApiApplicationTests {
     @Test
     public void qyObj() {
         BoxEntity book = new BoxEntity();
-        book.setMsg("我很帅5");
-        List<BoxEntity> boxEntities = mongoDBDaoImp.queryList(book);
- /*       book = boxEntities.get(0);
-        book.setUserName("sww");
-        mongoDBDaoImp.delete(boxEntities.get(0));
-        mongoDBDaoImp.save(book);*/
+        List<BoxEntity> boxEntities = mongoDBDaoImp.getPage(book,0,500000);
         System.out.println(boxEntities.size());
     }
 
@@ -50,7 +46,7 @@ public class ApiApplicationTests {
     @Test
     public void qyObj1() {
         BoxEntity book = new BoxEntity();
-        book.setUserName("tran");
+        book.setUserName("1556");
         long test = mongoDBDaoImp.getCount(book);
         System.out.println(test);
     }
@@ -68,5 +64,23 @@ public class ApiApplicationTests {
         updateBooks.setColor(books.getColor());
         mongoDBDaoImp.updateFirst(boxEntities.get(0), updateBooks);
         System.out.println(boxEntities.size());
+    }
+
+
+
+    @Test
+    public void save(){
+
+    }
+
+
+    public void saveObjtest(int x,int y) {
+
+        for (int i = x; i < y; i++) {
+            BoxEntity book = new BoxEntity();
+            book.setUserName(String.valueOf(i));
+            book.setMsg("我很帅" + i);
+            mongoDBDaoImp.save(book);
+        }
     }
 }
