@@ -2,7 +2,9 @@ package com.ginko.driver.api;
 
 import com.ginko.driver.framework.dao.MongoDBBoxDaoImp;
 import com.ginko.driver.framework.dao.MongoDBDaoImp;
+import com.ginko.driver.framework.dao.MongoPxDaoImp;
 import com.ginko.driver.framework.entity.BoxEntity;
+import com.ginko.driver.framework.entity.PxEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class ApiApplicationTests {
     @Autowired
     private MongoDBBoxDaoImp mongoDBDaoImp;
 
+    @Autowired
+    private MongoPxDaoImp mongoPxDaoImp;
+
     @Test
     public void saveObj() {
 
@@ -32,6 +37,24 @@ public class ApiApplicationTests {
             book.setUserName(String.valueOf(i));
             book.setMsg("我很帅");
             mongoDBDaoImp.save(book);
+        }
+    }
+
+
+    @Test
+    public void savePX(){
+        for (int i=200;i<=800;i++){
+            for (int y=200;y<=800;y++){
+                PxEntity pxEntity = new PxEntity();
+                pxEntity.setUserId(0);
+                pxEntity.setX(i);
+                pxEntity.setY(y);
+                pxEntity.setR(255);
+                pxEntity.setG(255);
+                pxEntity.setB(255);
+                pxEntity.setA(255);
+                mongoPxDaoImp.save(pxEntity);
+            }
         }
     }
 
