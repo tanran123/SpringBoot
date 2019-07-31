@@ -59,6 +59,20 @@ public class ApiApplicationTests {
     }
 
     @Test
+    public void update(){
+        PxEntity pxEntity = new PxEntity();
+        pxEntity.setX(400);
+        pxEntity.setY(400);
+        List<PxEntity> pxEntities = mongoPxDaoImp.queryList(pxEntity);
+        pxEntity.setR(0);
+        pxEntity.setG(0);
+        pxEntity.setB(0);
+        pxEntity.setA(255);
+        mongoPxDaoImp.updateFirst(pxEntities.get(0), pxEntity);
+        System.out.println(pxEntities.size());
+    }
+
+    @Test
     public void qyObj() {
         BoxEntity book = new BoxEntity();
         List<BoxEntity> boxEntities = mongoDBDaoImp.getPage(book,0,500000);
