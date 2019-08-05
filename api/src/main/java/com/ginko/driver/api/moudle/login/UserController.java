@@ -43,7 +43,9 @@ public class UserController {
         SysUser book = new SysUser();
         book.setUserName(sysUser.getUserName());
         List<SysUser> boxEntities = mongoDBDaoImp.queryList(book);
-        sysUser1.setIcon(boxEntities.get(0).getIcon());
+        if (boxEntities.size() > 0) {
+            sysUser1.setIcon(boxEntities.get(0).getIcon());
+        }
         return new MsgConfig("SUCCESS", "", sysUser1);
     }
 
@@ -58,7 +60,7 @@ public class UserController {
         book.setUserName(sysUser.getUserName());
         book.setIcon(sysUser.getIcon());
         mongoDBDaoImp.save(book);
-        /*将ICON存在mongodb中*/
+        /*将ICON存在mongodb中 --优化性能*/
         sysUser.setIcon("");
         sysUserService.saveUser(sysUser);
         return new MsgConfig("SUCCESS", "", null);

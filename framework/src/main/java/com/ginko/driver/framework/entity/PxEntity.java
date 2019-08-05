@@ -1,14 +1,19 @@
 package com.ginko.driver.framework.entity;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+
 import java.io.Serializable;
 
 public class PxEntity implements Serializable {
     private static final long serialVersionUID = -2964339263179051386L;
 
+    @Indexed
     private Integer userId;  //用户ID
 
+    @Indexed
     private Integer x;       //横坐标X
 
+    @Indexed
     private Integer y;       //纵坐标
 
     //rgba
