@@ -51,14 +51,14 @@ public class updateImageController {
         Base64.Encoder encoder = Base64.getEncoder();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();// 字节流
         try {
-            ImageIO.write(ImageBuffer.getFile(), "png", baos);// 写出到字节流
+            ImageIO.write(ImageBuffer.getFile(), "gif", baos);// 写出到字节流
         } catch (IOException e) {
             return new MsgConfig("500","读取图片失败",null);
         }
         byte[] bytes = baos.toByteArray();
         // 编码成base64
         String jpg_base64 = encoder.encodeToString(bytes);
-        return new MsgConfig("200",null,"data:image/png;base64," + jpg_base64);
+        return new MsgConfig("200",null,"data:image/gif;base64," + jpg_base64);
     }
 
 }

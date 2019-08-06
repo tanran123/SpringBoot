@@ -2,18 +2,22 @@ package com.ginko.driver.framework.entity;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
+@Entity
+@Table(name = "image_px_info")
 public class PxEntity implements Serializable {
     private static final long serialVersionUID = -2964339263179051386L;
 
-    @Indexed
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private Integer userId;  //用户ID
 
-    @Indexed
     private Integer x;       //横坐标X
 
-    @Indexed
     private Integer y;       //纵坐标
 
     //rgba
@@ -24,6 +28,14 @@ public class PxEntity implements Serializable {
     private Integer b;
 
     private Integer a;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Integer getUserId() {
         return userId;

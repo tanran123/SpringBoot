@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public class MongoDBDaoImp extends MongoDbDao<SysUser> {
+public class MongoSysUserDaoImp extends MongoDbDao<SysUser> {
 
     @Override
     protected Class<SysUser> getEntityClass() {

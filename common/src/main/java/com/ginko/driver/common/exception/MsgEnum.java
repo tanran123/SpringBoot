@@ -9,6 +9,7 @@ public enum MsgEnum {
     LOGINSUCCESS("SUCCESS","登陆成功"),
     USERNOTEXIST("ERROR","用户不存在"),
     USERALREADYEXIST("ERROR","用户已经存在"),
+    NOAUTH("ERROR","身份认证已过期，请重新登陆"),
     USERNAMEANDPASSWORDERROR("ERROR","用户名或密码错误"),
     SYSTEMERROR("ERROR","系统错误");
     private String code;

@@ -1,5 +1,6 @@
 package com.ginko.driver.api.config;
 
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 拦截器
  */
-public class ControllerHandler extends HandlerInterceptorAdapter{
+public class ControllerHandler extends HandlerInterceptorAdapter {
 
     Logger logger = LoggerFactory.getLogger(ControllerHandler.class);
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.info(request.getRemoteAddr());
         logger.info(request.getRequestURL().toString());
+        String token = request.getHeader("token");
+        logger.info(token);
         return true;
     }
 }

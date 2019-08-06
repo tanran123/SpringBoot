@@ -1,5 +1,7 @@
 package com.ginko.driver.framework.entity;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+
 import javax.persistence.*;
 
 /**
@@ -13,8 +15,10 @@ import javax.persistence.*;
 public class SysUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Indexed
+    private long userId;
 
+    @Indexed
     private String userName;
 
     private String password;
@@ -29,12 +33,14 @@ public class SysUser {
 
     private String updateTime;
 
-    public long getId() {
-        return id;
+    private String token;
+
+    public long getUserId() {
+        return userId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getUserName() {
@@ -91,5 +97,13 @@ public class SysUser {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

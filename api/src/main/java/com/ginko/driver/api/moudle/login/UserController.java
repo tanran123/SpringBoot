@@ -2,15 +2,11 @@ package com.ginko.driver.api.moudle.login;
 
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.exception.MsgEnum;
-import com.ginko.driver.framework.dao.MongoDBDaoImp;
-import com.ginko.driver.framework.entity.BoxEntity;
+import com.ginko.driver.framework.dao.MongoSysUserDaoImp;
 import com.ginko.driver.framework.entity.SysUser;
 import com.ginko.driver.framework.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,42 +23,26 @@ public class UserController {
     private SysUserService sysUserService;
 
     @Autowired
-    private MongoDBDaoImp mongoDBDaoImp;
+    private MongoSysUserDaoImp mongoDBDaoImp;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public MsgConfig login(@RequestBody SysUser sysUser) {
-        SysUser sysUser1 = sysUserService.findByuserName(sysUser.getUserName());
-        if (sysUser1 == null) {
-            return new MsgConfig("ERROR", MsgEnum.USERNOTEXIST.getDesc());
+    @RequestMapping(value = "/updateToken", method = RequestMethod.POST)
+    public MsgConfig register(@RequestBody SysUser sysUser) {
+        SysUser sysUserNew = new SysUser();
+        sysUserNew.setUserId(sysUser.getUserId());
+        SysUser sysUser1 = mongoDBDaoImp.queryOne(sysUserNew);
+        //第一次登陆记录用户
+        if(sysUser1 ==null){
+            mongoDBDaoImp.save(sysUser);
+            sysUserService.saveUser(sysUser);
         }
-        /*用户名或密码错误*/
-        if (!sysUser1.getPassword().equals(sysUser.getPassword())) {
-            return new MsgConfig("ERROR", MsgEnum.USERNAMEANDPASSWORDERROR.getDesc());
+        else{
+            mongoDBDaoImp.updateFirst(sysUser1,sysUser);
         }
-        /*从MONGODB中获取ICON*/
-        SysUser book = new SysUser();
-        book.setUserName(sysUser.getUserName());
-        List<SysUser> boxEntities = mongoDBDaoImp.queryList(book);
-        if (boxEntities.size() > 0) {
-            sysUser1.setIcon(boxEntities.get(0).getIcon());
-        }
-        return new MsgConfig("SUCCESS", "", sysUser1);
+        return new MsgConfig("SUCCESS", "", null);
     }
 
-
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public MsgConfig register(@RequestBody SysUser sysUser) {
-        SysUser sysUser1 = sysUserService.findByuserName(sysUser.getUserName());
-        if (sysUser1 != null) {
-            return new MsgConfig("ERROR", MsgEnum.USERALREADYEXIST.getDesc());
-        }
-        SysUser book = new SysUser();
-        book.setUserName(sysUser.getUserName());
-        book.setIcon(sysUser.getIcon());
-        mongoDBDaoImp.save(book);
-        /*将ICON存在mongodb中 --优化性能*/
-        sysUser.setIcon("");
-        sysUserService.saveUser(sysUser);
-        return new MsgConfig("SUCCESS", "", null);
+    @RequestMapping(value = "/401", method = RequestMethod.POST)
+    public MsgConfig error401(@RequestBody SysUser sysUser) {
+        return new MsgConfig("SUCCESS", MsgEnum.NOAUTH.getDesc(), null);
     }
 }
