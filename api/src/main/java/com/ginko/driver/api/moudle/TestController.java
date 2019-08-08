@@ -36,8 +36,7 @@ public class TestController {
     public MsgConfig getMongo() {
         logger.info("-----------------请求像素数据-----------------");
         PxEntity pxEntity = new PxEntity();
-        pxEntity.setUserId(0);
-        List<PxEntity> boxEntities = mongoPxDaoImp.getPage(pxEntity, 0, 360000);
+        List<PxEntity> boxEntities = mongoPxDaoImp.queryList(pxEntity);
         return new MsgConfig("200", String.valueOf(boxEntities.size()), boxEntities);
     }
 
