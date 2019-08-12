@@ -1,5 +1,6 @@
 package com.ginko.driver.framework.dao;
 
+import com.ginko.driver.framework.entity.LockBuyPx;
 import com.ginko.driver.framework.entity.OrderInfo;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -7,7 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -16,17 +16,17 @@ import java.util.List;
  * @Date Create in 13:59 2019/7/22
  */
 @Repository
-public interface OrderInfoDao extends CrudRepository<OrderInfo,Long> {
+public interface LockBuyPxDao extends CrudRepository<LockBuyPx,Long> {
 
-    OrderInfo save(OrderInfo orderInfo);
+    LockBuyPx save(LockBuyPx lockBuyPx);
 
-    List<OrderInfo> findBySellerId(int sellerId);
+    LockBuyPx findByXAndY(int x,int y);
 
-    List<OrderInfo> findByPurchaserId(int purchaserId);
+    List<LockBuyPx> findByUserId(int userId);
 
 
     @Transactional
     @Modifying
-    @Query(value = "update sys_order_info  transaction_status = ?2, update_time = DATE_FORMAT(NOW(),'%Y-%m-%d %T')where user_id=?1",nativeQuery = true)
-    int updateOrderTransactionStatus(int id,Integer status);
+    @Query(value = "update lock_by_px  set user_id = ?3, lock_time = DATE_FORMAT(NOW(),'%Y-%m-%d %T')where x=?1 AND y=?2",nativeQuery = true)
+    int updateLockTimeOrUserId(int x,int y,int userId);
 }

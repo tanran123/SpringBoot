@@ -47,12 +47,12 @@ public class ImageBuffer {
     }
 
     public static void main(String[] args) {
-        ImageBuffer.updatePxColor(800, 600, 255, 255, 255, 255);
+        ImageBuffer.updatePxColor(100, 200, 255, 255, 255, 255);
         Base64.Encoder encoder = Base64.getEncoder();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();// 字节流
         try {
             ImageIO.write(ImageBuffer.getFile(), "png", baos);// 写出到字节流
-            ImageIO.write(ImageBuffer.getFile(), "png", new File("D:/test3.jpg"));
+            ImageIO.write(ImageBuffer.getFile(), "png", new File("D:/test6.jpg")); //新建图片
         } catch (IOException e) {
             LOGGER.warn("读取图片失败");
         }

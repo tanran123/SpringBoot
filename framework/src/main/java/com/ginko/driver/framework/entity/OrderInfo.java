@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 public class OrderInfo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id;
 
-    private Long purchaserId;  //买方ID
+    private int purchaserId;  //买方ID
 
-    private Long sellerId;     //售方id
+    private int sellerId;     //售方id
 
     private BigDecimal amount; //金额
 
@@ -30,27 +30,27 @@ public class OrderInfo implements Serializable {
 
     private String updateTime;
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public Long getPurchaserId() {
+    public int getPurchaserId() {
         return purchaserId;
     }
 
-    public void setPurchaserId(Long purchaserId) {
+    public void setPurchaserId(int purchaserId) {
         this.purchaserId = purchaserId;
     }
 
-    public Long getSellerId() {
+    public int getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(Long sellerId) {
+    public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
     }
 

@@ -7,8 +7,10 @@ package com.ginko.driver.common.exception;
  */
 public enum MsgEnum {
     LOGINSUCCESS("SUCCESS","登陆成功"),
+    SUCCESS("SUCCESS","成功"),
     USERNOTEXIST("ERROR","用户不存在"),
     USERALREADYEXIST("ERROR","用户已经存在"),
+    NOROLEAUTH("ERROR","您无权限修改"),
     NOAUTH("ERROR","身份认证已过期，请重新登陆"),
     USERNAMEANDPASSWORDERROR("ERROR","用户名或密码错误"),
     SYSTEMERROR("ERROR","系统错误");

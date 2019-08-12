@@ -13,25 +13,35 @@ public class PxUserInfo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id;
 
-    private Long userId;
+    private int userId;
 
     private int x;
 
     private int y;
 
-    private String advert;
+    private int isSellStatus;
 
-    private BigDecimal amount;
+    private String advert = "";
 
-    private String updateTime;
+    private BigDecimal amount = BigDecimal.valueOf(0);
 
-    public Long getUserId() {
+    private String updateTime = "";
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -75,11 +85,17 @@ public class PxUserInfo implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public Long getId() {
-        return id;
+
+    public void setXAndY(int cx,int cy){
+        this.x = cx;
+        this.y =cy;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public int getIsSellStatus() {
+        return isSellStatus;
+    }
+
+    public void setIsSellStatus(int isSellStatus) {
+        this.isSellStatus = isSellStatus;
     }
 }
