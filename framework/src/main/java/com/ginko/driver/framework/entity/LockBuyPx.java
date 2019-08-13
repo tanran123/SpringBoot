@@ -22,8 +22,7 @@ public class LockBuyPx {
 
     private String lockTime;
 
-    @Transient
-    private boolean LockStatus;
+    private int lockStatus;
 
     public int getId() {
         return id;
@@ -70,11 +69,11 @@ public class LockBuyPx {
         this.y =cy;
     }
 
-    public boolean isLockStatus() {
-        return LockStatus;
+    public int getLockStatus() {
+        return lockStatus;
     }
 
-    public void setLockStatus(boolean lockStatus) {
-        LockStatus = lockStatus;
+    public void setLockStatus(int lockStatus) {
+        this.lockStatus = lockStatus;
     }
 }

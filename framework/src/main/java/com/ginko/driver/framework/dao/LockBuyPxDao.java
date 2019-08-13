@@ -24,9 +24,11 @@ public interface LockBuyPxDao extends CrudRepository<LockBuyPx,Long> {
 
     List<LockBuyPx> findByUserId(int userId);
 
+    int countByUserId(int userId);
+
 
     @Transactional
     @Modifying
-    @Query(value = "update lock_by_px  set user_id = ?3, lock_time = DATE_FORMAT(NOW(),'%Y-%m-%d %T')where x=?1 AND y=?2",nativeQuery = true)
-    int updateLockTimeOrUserId(int x,int y,int userId);
+    @Query(value = "update lock_by_px  set user_id = ?3,lock_status=?4 ,lock_time = DATE_FORMAT(NOW(),'%Y-%m-%d %T')where x=?1 AND y=?2",nativeQuery = true)
+    int updateLockTimeOrUserId(int x,int y,int userId,int status);
 }

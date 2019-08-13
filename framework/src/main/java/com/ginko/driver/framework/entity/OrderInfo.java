@@ -20,6 +20,10 @@ public class OrderInfo implements Serializable {
 
     private int sellerId;     //售方id
 
+    private int x;
+
+    private int y;
+
     private BigDecimal amount; //金额
 
     private String currencyType; //币种
@@ -93,5 +97,26 @@ public class OrderInfo implements Serializable {
 
     public void setTransactionStatus(Integer transactionStatus) {
         this.transactionStatus = transactionStatus;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setXAndY(int cx,int cy){
+        this.x = cx;
+        this.y =cy;
     }
 }

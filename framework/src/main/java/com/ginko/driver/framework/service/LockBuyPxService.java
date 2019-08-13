@@ -31,6 +31,10 @@ public class LockBuyPxService {
     }
 
     public int updateLock(LockBuyPx lockBuyPx) {
-        return lockBuyPxDao.updateLockTimeOrUserId(lockBuyPx.getX(),lockBuyPx.getY(),lockBuyPx.getUserId());
+        return lockBuyPxDao.updateLockTimeOrUserId(lockBuyPx.getX(),lockBuyPx.getY(),lockBuyPx.getUserId(),lockBuyPx.getLockStatus());
+    }
+
+    public int CountUserId(LockBuyPx lockBuyPx){
+         return lockBuyPxDao.countByUserId(lockBuyPx.getUserId());
     }
 }

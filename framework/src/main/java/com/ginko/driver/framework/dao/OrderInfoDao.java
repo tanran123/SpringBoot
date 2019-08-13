@@ -20,8 +20,18 @@ public interface OrderInfoDao extends CrudRepository<OrderInfo,Long> {
 
     OrderInfo save(OrderInfo orderInfo);
 
+    /**
+     * 卖方ID
+     * @param sellerId
+     * @return
+     */
     List<OrderInfo> findBySellerId(int sellerId);
 
+    /**
+     * 买方ID
+     * @param purchaserId
+     * @return
+     */
     List<OrderInfo> findByPurchaserId(int purchaserId);
 
 
