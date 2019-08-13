@@ -38,11 +38,11 @@ public class UserController {
         else{
             mongoDBDaoImp.updateFirst(sysUser1,sysUser);
         }
-        return new MsgConfig("SUCCESS", "", null);
+        return new MsgConfig("200", "", null);
     }
 
     @RequestMapping(value = "/401", method = RequestMethod.POST)
     public MsgConfig error401(@RequestBody SysUser sysUser) {
-        return new MsgConfig("SUCCESS", MsgEnum.NOAUTH.getDesc(), null);
+        return new MsgConfig("401", MsgEnum.NOAUTH.getDesc(), null);
     }
 }

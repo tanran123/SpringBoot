@@ -1,10 +1,10 @@
 package com.ginko.driver.framework.service;
 
 import com.ginko.driver.common.entity.MsgConfig;
+import com.ginko.driver.common.util.DateTool;
 import com.ginko.driver.framework.dao.OrderInfoDao;
 import com.ginko.driver.framework.entity.OrderInfo;
 import com.ginko.driver.framework.entity.PxUserInfo;
-import com.travelsky.security.pci.util.DateTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

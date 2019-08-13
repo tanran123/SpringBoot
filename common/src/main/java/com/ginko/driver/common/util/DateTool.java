@@ -1,6 +1,8 @@
-package com.ginko.driver.api.util;
+package com.ginko.driver.common.util;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,7 +14,7 @@ public class DateTool {
 
 	private static final SimpleDateFormat shortFormat = new SimpleDateFormat(
 			"yyyy-MM-dd");
-	private static final Logger log = Logger.getLogger(DateTool.class);
+	private static final Logger log = LoggerFactory.getLogger(DateTool.class);
 	public static final String getNowTime() {
 		return new SimpleDateFormat(
 				"yyyy-MM-dd HH:mm:dd").format(new Date());
@@ -308,7 +310,7 @@ public class DateTool {
 			return new SimpleDateFormat(
 					"yyyy-MM-dd").format(calendar.getTime());
 		} catch (ParseException e) {
-			log.error(e);
+			log.error(e.getMessage());
 		}
 		return "";
 	}
@@ -323,7 +325,7 @@ public class DateTool {
 			return new SimpleDateFormat(
 					"yyyy-MM-dd").format(calendar.getTime());
 		} catch (ParseException e) {
-			log.error(e);
+			log.error(e.getMessage());
 		}
 		return "";
 	}
@@ -354,7 +356,7 @@ public class DateTool {
 			Date date = indf.parse(dateStr);
 			sdate = outdf.format(date);
 		} catch (ParseException e) {
-			log.error(e);
+				log.error(e.getMessage());
 		}
 
 		return sdate;
@@ -407,7 +409,7 @@ public class DateTool {
 			c.set(5, day - 1);
 			dayBefore = new SimpleDateFormat("yyyyMMdd").format(c.getTime());
 		} catch (ParseException e) {
-			log.error(e);
+				log.error(e.getMessage());
 		}
 		return dayBefore;
 	}
@@ -430,7 +432,7 @@ public class DateTool {
 			c.setTime(date);
 			dayBefore = new SimpleDateFormat("yyyyMMdd").format(c.getTime());
 		} catch (ParseException e) {
-			log.error(e);
+				log.error(e.getMessage());
 		}
 		return dayBefore;
 	}
@@ -441,7 +443,7 @@ public class DateTool {
 		try {
 			date = new SimpleDateFormat("yy-MM-dd").parse(iputdate);
 		} catch (ParseException e) {
-			log.error(e);
+				log.error(e.getMessage());
 		}
 		c.setTime(date);
 		int day = c.get(5);
@@ -456,7 +458,7 @@ public class DateTool {
 			d = new SimpleDateFormat(
 					"yyyy-MM-dd").parse(date);
 		} catch (Exception e) {
-			log.error(e);
+				log.error(e.getMessage());
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(d);
@@ -591,7 +593,7 @@ public class DateTool {
 			}
 			return 0;
 		} catch (Exception exception) {
-			log.error(exception);
+			log.error(exception.getMessage());
 		}
 		return 0;
 	}
