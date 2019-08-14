@@ -118,7 +118,7 @@ public class PxInfoController {
 
 
     /**
-     * 修改金额及广告或者用户
+     * 修改金额及广告
      *
      * @param pxUserInfoP
      * @return
@@ -135,7 +135,7 @@ public class PxInfoController {
         //不存在则新增记录
         if (pxUserInfo == null) {
             pxUserInfoService.insertPxUserInfo(pxUserInfoP);
-            return new MsgConfig("200", "购买成功", null);
+            return new MsgConfig("200", "修改成功", null);
         }
         //存在则修改
         else {
@@ -145,7 +145,6 @@ public class PxInfoController {
             }
             pxUserInfo.setAmount(pxUserInfoP.getAmount());
             pxUserInfo.setAdvert(pxUserInfo.getAdvert());
-            pxUserInfo.setUserId(pxUserInfoP.getUserId());
             pxUserInfo.setIsSellStatus(pxUserInfoP.getIsSellStatus());
             pxUserInfoService.updatePxUserInfo(pxUserInfo);
             return new MsgConfig("200", "修改成功", pxUserInfo);
@@ -175,8 +174,8 @@ public class PxInfoController {
      * @param lockBuyPxP
      * @return
      */
-    @RequestMapping(value = "/getBuyLock", method = RequestMethod.POST)
-    public MsgConfig getBuyLock(@RequestBody LockBuyPx lockBuyPxP) {
+    @RequestMapping(value = "/updateBuyLock", method = RequestMethod.POST)
+    public MsgConfig updateBuyLock(@RequestBody LockBuyPx lockBuyPxP) {
         LockBuyPx lockBuyPx = lockBuyPxService.findOne(lockBuyPxP);
         //用户当前购买中的点超过最大
         int lockCount = lockBuyPxService.CountUserId(lockBuyPxP);
@@ -185,12 +184,16 @@ public class PxInfoController {
         }
         if (lockBuyPx == null) {
             lockBuyPxP.setLockTime(DateTool.getNowTime());
+            lockBuyPxP.setLockStatus(1);
             lockBuyPxService.insert(lockBuyPxP);
             return new MsgConfig("200", null, false);
         } else {
             //如果已被锁定
             if (lockBuyPx.getLockStatus() == 1) {
                 //判断是否已过时间
+                if(lockBuyPx.getUserId() == lockBuyPxP.getUserId()){
+                    return new MsgConfig("200", "该点已被您锁定，请及时付款，15分钟后将失效·", true);
+                }
                 if (DateTool.diffTimeMin(lockBuyPx.getLockTime()) > 15) {
                     lockBuyPxP.setLockStatus(1);
                     lockBuyPxService.updateLock(lockBuyPxP);
@@ -210,12 +213,35 @@ public class PxInfoController {
 
 
     /**
+     * 查询用户锁定的点
+     * @param lockBuyPxP
+     * @return
+     */
+    @RequestMapping(value = "/getBuyLock",method = RequestMethod.POST)
+    public MsgConfig getBuyLock(@RequestBody LockBuyPx lockBuyPxP){
+        List<LockBuyPx> lockBuyPxes = lockBuyPxService.findByUserId(lockBuyPxP);
+        return new MsgConfig("200",null,lockBuyPxes);
+    }
+
+    /**
      * 回调新增订单
      * @param lockBuyPxP
      * @return
      */
     @RequestMapping(value = "/insertOrder", method = RequestMethod.POST)
-    public MsgConfig insertOrder(@RequestBody OrderInfo orderInfo){
+    public MsgConfig insertOrder(@RequestBody OrderInfo orderInfo, @RequestHeader("token") String token) {
+        SysUser sysUser = new SysUser();
+        sysUser.setUserId(orderInfo.getUserId());
+        sysUser = mongoDBDaoImp.queryOne(sysUser);
+        if (!sysUser.getToken().equals(token)) {
+            return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
+        }
+        //用户购买后解除锁定
+        LockBuyPx lockBuyPx = new LockBuyPx();
+        lockBuyPx.setXAndY(orderInfo.getX(),orderInfo.getY());
+        lockBuyPx.setLockStatus(0);
+        lockBuyPx.setUserId(orderInfo.getUserId());
+        lockBuyPxService.updateLock(lockBuyPx);
        return orderInfoService.insertOrderInfo(orderInfo);
     }
 }

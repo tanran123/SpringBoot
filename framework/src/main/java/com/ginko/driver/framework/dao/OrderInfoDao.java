@@ -25,14 +25,7 @@ public interface OrderInfoDao extends CrudRepository<OrderInfo,Long> {
      * @param sellerId
      * @return
      */
-    List<OrderInfo> findBySellerId(int sellerId);
-
-    /**
-     * 买方ID
-     * @param purchaserId
-     * @return
-     */
-    List<OrderInfo> findByPurchaserId(int purchaserId);
+    List<OrderInfo> findByUserId(int userId);
 
 
     @Transactional

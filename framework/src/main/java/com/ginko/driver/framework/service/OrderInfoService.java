@@ -33,43 +33,67 @@ public class OrderInfoService {
         PxUserInfo pxUserInfo1 = pxUserInfoService.findByXAndY(pxUserInfo);
         //不存在这个点说明是第一次卖，直接转账给公司，然后新增该点信息
         if (pxUserInfo1 ==null){
+            //修改权限
             pxUserInfo.setIsSellStatus(0);
             pxUserInfo.setAdvert("");
-            pxUserInfo.setUserId(orderInfoP.getPurchaserId());
+            pxUserInfo.setUserId(orderInfoP.getUserId());
             pxUserInfo.setAmount(orderInfoP.getAmount());
             pxUserInfoService.insertPxUserInfo(pxUserInfo);
 
+            //插入购买记录
             orderInfoP.setCreateTime(DateTool.getNowTime());
-            orderInfoP.setSellerId(0);
             orderInfoP.setTransactionStatus(1);
+            orderInfoP.setMoneyType(0);
             orderInfoP.setCurrencyType("USD");
+            orderInfoP.setDes("买入");
             orderInfoDao.save(orderInfoP);
+
+            //插入出售记录
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setUserId(8318);
+            orderInfo.setDes("卖出");
+            orderInfo.setXAndY(orderInfoP.getX(),orderInfoP.getY());
+            orderInfo.setMoneyType(1);
+            orderInfo.setCurrencyType("USD");
+            orderInfo.setCreateTime(DateTool.getNowTime());
+            orderInfo.setTransactionStatus(1);
+            orderInfo.setAmount(orderInfoP.getAmount());
+            orderInfoDao.save(orderInfo);
             return new MsgConfig("200","购买成功",null);
         }
         else{
+            //修改权限
             int sellerId = pxUserInfo1.getUserId();
             pxUserInfo1.setIsSellStatus(0);
             pxUserInfo.setAdvert("");
-            pxUserInfo1.setUserId(orderInfoP.getPurchaserId());
+            pxUserInfo1.setUserId(orderInfoP.getUserId());
             pxUserInfo1.setAmount(orderInfoP.getAmount());
             pxUserInfoService.updatePxUserInfo(pxUserInfo1);
 
             orderInfoP.setCreateTime(DateTool.getNowTime());
-            orderInfoP.setSellerId(sellerId);
+            orderInfoP.setUserId(orderInfoP.getUserId());
             orderInfoP.setTransactionStatus(1);
             orderInfoP.setCurrencyType("USD");
             orderInfoDao.save(orderInfoP);
+
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setUserId(sellerId);
+            orderInfo.setDes("卖出");
+            orderInfo.setXAndY(orderInfoP.getX(),orderInfoP.getY());
+            orderInfo.setMoneyType(1);
+            orderInfo.setCurrencyType("USD");
+            orderInfo.setCreateTime(DateTool.getNowTime());
+            orderInfo.setTransactionStatus(1);
+            orderInfo.setAmount(orderInfoP.getAmount());
+            orderInfoDao.save(orderInfo);
             return new MsgConfig("200","购买成功",null);
         }
     }
 
-    public List<OrderInfo> findBySeller(OrderInfo orderInfo){
-        return orderInfoDao.findBySellerId(orderInfo.getSellerId());
+    public List<OrderInfo> findByUserId(OrderInfo orderInfo){
+        return orderInfoDao.findByUserId(orderInfo.getUserId());
     }
 
-    public List<OrderInfo> findByPurchaser(OrderInfo orderInfo){
-        return orderInfoDao.findByPurchaserId(orderInfo.getPurchaserId());
-    }
 
     public int update(OrderInfo orderInfo){
         return orderInfoDao.updateOrderTransactionStatus(orderInfo.getId(),orderInfo.getTransactionStatus());

@@ -16,9 +16,7 @@ public class OrderInfo implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private int purchaserId;  //买方ID
-
-    private int sellerId;     //售方id
+    private int userId;
 
     private int x;
 
@@ -34,6 +32,10 @@ public class OrderInfo implements Serializable {
 
     private String updateTime;
 
+    private String des;
+
+    private int moneyType;   //（0为买入，1位卖出）
+
     public int getId() {
         return id;
     }
@@ -42,20 +44,12 @@ public class OrderInfo implements Serializable {
         this.id = id;
     }
 
-    public int getPurchaserId() {
-        return purchaserId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setPurchaserId(int purchaserId) {
-        this.purchaserId = purchaserId;
-    }
-
-    public int getSellerId() {
-        return sellerId;
-    }
-
-    public void setSellerId(int sellerId) {
-        this.sellerId = sellerId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public BigDecimal getAmount() {
@@ -115,8 +109,24 @@ public class OrderInfo implements Serializable {
         this.y = y;
     }
 
-    public void setXAndY(int cx,int cy){
+    public void setXAndY(int cx, int cy) {
         this.x = cx;
-        this.y =cy;
+        this.y = cy;
+    }
+
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
+    }
+
+    public int getMoneyType() {
+        return moneyType;
+    }
+
+    public void setMoneyType(int moneyType) {
+        this.moneyType = moneyType;
     }
 }
