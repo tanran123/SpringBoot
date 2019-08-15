@@ -14,9 +14,8 @@ import javax.persistence.*;
 @Table(name = "sys_user")
 public class SysUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Indexed
-    private long userId;
+    private int userId;
 
     @Indexed
     private String userName;
@@ -35,11 +34,11 @@ public class SysUser {
 
     private String token;
 
-    public long getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

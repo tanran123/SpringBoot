@@ -30,9 +30,12 @@ public class UserController {
         SysUser sysUserNew = new SysUser();
         sysUserNew.setUserId(sysUser.getUserId());
         SysUser sysUser1 = mongoDBDaoImp.queryOne(sysUserNew);
+        SysUser sysUser11 = sysUserService.findByUserId(sysUser.getUserId());
         //第一次登陆记录用户
         if(sysUser1 ==null){
             mongoDBDaoImp.save(sysUser);
+        }
+        if (sysUser11 ==null){
             sysUserService.saveUser(sysUser);
         }
         else{

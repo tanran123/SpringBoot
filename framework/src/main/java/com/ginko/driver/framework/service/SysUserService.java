@@ -19,6 +19,9 @@ public class SysUserService {
     public SysUser findByuserName(String userName){
         return sysUserDao.findByUserName(userName);
     }
+    public SysUser findByUserId(int userId){
+        return sysUserDao.findByUserId(userId);
+    }
 
     public SysUser findByuserNameAndPassword(String userName,String password){
         return sysUserDao.findByUserNameAndPassword(userName,password);

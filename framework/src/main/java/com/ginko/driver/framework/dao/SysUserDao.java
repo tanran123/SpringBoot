@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 public interface SysUserDao extends CrudRepository<SysUser,Long> {
      SysUser findByUserName(String userNmae);
 
+     SysUser findByUserId(int userId);
+
      SysUser findByUserNameAndPassword(String username,String password);
 
      SysUser save(SysUser sysUser);
