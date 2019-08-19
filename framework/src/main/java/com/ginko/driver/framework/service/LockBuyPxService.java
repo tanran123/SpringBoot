@@ -27,7 +27,7 @@ public class LockBuyPxService {
     }
 
     public List<LockBuyPx> findByUserId(LockBuyPx lockBuyPx) {
-        return lockBuyPxDao.findByUserId(lockBuyPx.getUserId());
+        return lockBuyPxDao.findByUserIdAndLockStatus(lockBuyPx.getUserId(),lockBuyPx.getLockStatus());
     }
 
     public int updateLock(LockBuyPx lockBuyPx) {
@@ -35,6 +35,7 @@ public class LockBuyPxService {
     }
 
     public int CountUserId(LockBuyPx lockBuyPx){
-         return lockBuyPxDao.countByUserId(lockBuyPx.getUserId());
+         lockBuyPx.setLockStatus(1);
+         return lockBuyPxDao.countByUserIdAndLockStatus(lockBuyPx.getUserId(),lockBuyPx.getLockStatus());
     }
 }

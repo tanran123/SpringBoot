@@ -1,6 +1,8 @@
 package com.ginko.driver.api.moudle;
 
 
+import com.ginko.driver.api.webSocket.CustomerWebSoket;
+import com.ginko.driver.api.webSocket.PxBuySocket;
 import com.ginko.driver.common.util.DateTool;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.exception.MsgEnum;
@@ -15,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -149,7 +153,6 @@ public class PxInfoController {
             pxUserInfoService.updatePxUserInfo(pxUserInfo);
             return new MsgConfig("200", "修改成功", pxUserInfo);
         }
-
     }
 
     /**
@@ -242,6 +245,29 @@ public class PxInfoController {
         lockBuyPx.setLockStatus(0);
         lockBuyPx.setUserId(orderInfo.getUserId());
         lockBuyPxService.updateLock(lockBuyPx);
-       return orderInfoService.insertOrderInfo(orderInfo);
+        MsgConfig msgConfig = orderInfoService.insertOrderInfo(orderInfo);
+        try {
+            PxBuySocket.sendByUserId(8318,orderInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return msgConfig;
+    }
+
+
+
+    @RequestMapping(value = "/sendSocket", method = RequestMethod.POST)
+    public void send(){
+        try {
+            PxBuySocket.sendByUserId(8318,"兄弟我给你发信息了");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getBuyLockList", method = RequestMethod.POST)
+    public MsgConfig getBuyLockList(@RequestBody LockBuyPx lockBuyPx){
+        List<LockBuyPx> lockBuyPxes = lockBuyPxService.findByUserId(lockBuyPx);
+        return new MsgConfig("200",null,lockBuyPxes);
     }
 }

@@ -22,9 +22,9 @@ public interface LockBuyPxDao extends CrudRepository<LockBuyPx,Long> {
 
     LockBuyPx findByXAndY(int x,int y);
 
-    List<LockBuyPx> findByUserId(int userId);
+    List<LockBuyPx> findByUserIdAndLockStatus(int userId,int lockStatus);
 
-    int countByUserId(int userId);
+    int countByUserIdAndLockStatus(int userId,int lockStatus);
 
 
     @Transactional

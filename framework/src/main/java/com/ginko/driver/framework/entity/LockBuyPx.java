@@ -16,6 +16,8 @@ public class LockBuyPx {
 
     private int userId;
 
+    private int sellerId;
+
     private int x;
 
     private int y;
@@ -75,5 +77,13 @@ public class LockBuyPx {
 
     public void setLockStatus(int lockStatus) {
         this.lockStatus = lockStatus;
+    }
+
+    public int getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
     }
 }
