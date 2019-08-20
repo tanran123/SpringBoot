@@ -1,6 +1,7 @@
 package com.ginko.driver.framework.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 /**
  * @Author: tran
@@ -21,6 +22,8 @@ public class LockBuyPx extends CommandEntity {
     private int x;
 
     private int y;
+
+    private BigDecimal amount;
 
     private String lockTime;
 
@@ -85,5 +88,14 @@ public class LockBuyPx extends CommandEntity {
 
     public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
+    }
+
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }

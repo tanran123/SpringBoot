@@ -231,17 +231,6 @@ public class PxInfoController {
         return new MsgConfig("200", null, null);
     }
 
-    /**
-     * 查询用户锁定的点
-     *
-     * @param lockBuyPxP
-     * @return
-     */
-    @RequestMapping(value = "/getBuyLock", method = RequestMethod.POST)
-    public MsgConfig getBuyLock(@RequestBody LockBuyPx lockBuyPxP) {
-        List<LockBuyPx> lockBuyPxes = lockBuyPxService.findByUserId(lockBuyPxP);
-        return new MsgConfig("200", null, lockBuyPxes);
-    }
 
     /**
      * 回调新增订单
