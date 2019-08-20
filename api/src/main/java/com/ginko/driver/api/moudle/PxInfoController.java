@@ -128,11 +128,11 @@ public class PxInfoController {
      * @return
      */
     @RequestMapping(value = "/updateAdvertOrAmount", method = RequestMethod.POST)
-    public MsgConfig updateAdvertOrAmount(@RequestBody PxUserInfo pxUserInfoP, @RequestHeader("token") String token) {
+    public MsgConfig updateAdvertOrAmount(@RequestBody PxUserInfo pxUserInfoP) {
         SysUser sysUser = new SysUser();
         sysUser.setUserId(pxUserInfoP.getUserId());
         sysUser = mongoDBDaoImp.queryOne(sysUser);
-        if (!sysUser.getToken().equals(token)) {
+        if (!sysUser.getToken().equals(pxUserInfoP.getToken())) {
             return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
         }
         PxUserInfo pxUserInfo = pxUserInfoService.findByXAndY(pxUserInfoP);
@@ -182,72 +182,90 @@ public class PxInfoController {
         LockBuyPx lockBuyPx = lockBuyPxService.findOne(lockBuyPxP);
         //用户当前购买中的点超过最大
         int lockCount = lockBuyPxService.CountUserId(lockBuyPxP);
-        if (lockCount>10){
-            return new MsgConfig("403", "您已有10个未付款订单，请先付款", false);
+        if (lockCount > 10) {
+            return new MsgConfig("403", "您已有10个未付款订单，请先完成付款", false);
         }
         if (lockBuyPx == null) {
             lockBuyPxP.setLockTime(DateTool.getNowTime());
             lockBuyPxP.setLockStatus(1);
             lockBuyPxService.insert(lockBuyPxP);
             return new MsgConfig("200", null, false);
-        } else {
-            //如果已被锁定
-            if (lockBuyPx.getLockStatus() == 1) {
-                //判断是否已过时间
-                if(lockBuyPx.getUserId() == lockBuyPxP.getUserId()){
-                    return new MsgConfig("200", "该点已被您锁定，请及时付款，15分钟后将失效·", true);
-                }
-                if (DateTool.diffTimeMin(lockBuyPx.getLockTime()) > 15) {
-                    lockBuyPxP.setLockStatus(1);
-                    lockBuyPxService.updateLock(lockBuyPxP);
-                    return new MsgConfig("200", null, true);
-                } else {
-                    return new MsgConfig("402", "其他用户购买中", false);
-                }
-            }
-            //如果没被锁定
-            else {
-                lockBuyPxP.setLockStatus(1);
-                lockBuyPxService.updateLock(lockBuyPxP);
-                return new MsgConfig("200", null, true);
-            }
+        }
+        //如果存在则锁定
+        else {
+            lockBuyPxP.setLockStatus(1);
+            lockBuyPxService.updateLock(lockBuyPxP);
+            return new MsgConfig("200", null, true);
         }
     }
 
 
     /**
      * 查询用户锁定的点
+     *
      * @param lockBuyPxP
      * @return
      */
-    @RequestMapping(value = "/getBuyLock",method = RequestMethod.POST)
-    public MsgConfig getBuyLock(@RequestBody LockBuyPx lockBuyPxP){
+    @RequestMapping(value = "/getBuyLockXAndY", method = RequestMethod.POST)
+    public MsgConfig getBuyLockXAndY(@RequestBody LockBuyPx lockBuyPxP) {
+        LockBuyPx lockBuyPx = lockBuyPxService.findOne(lockBuyPxP);
+        if (lockBuyPx != null) {
+            //如果被锁定
+            if (lockBuyPx.getLockStatus() == 1) {
+                // 如果锁定时间已过
+                if (DateTool.diffTimeMin(lockBuyPx.getLockTime()) > 15) {
+                    return new MsgConfig("200", null, null);
+                }
+
+
+                //判断是否为自己锁定
+                if (lockBuyPx.getUserId() == lockBuyPxP.getUserId()) {
+                    return new MsgConfig("201", null, lockBuyPx);
+                }
+//                不是自己锁定
+                else {
+                    return new MsgConfig("401", null, lockBuyPx);
+                }
+            }
+        }
+        return new MsgConfig("200", null, null);
+    }
+
+    /**
+     * 查询用户锁定的点
+     *
+     * @param lockBuyPxP
+     * @return
+     */
+    @RequestMapping(value = "/getBuyLock", method = RequestMethod.POST)
+    public MsgConfig getBuyLock(@RequestBody LockBuyPx lockBuyPxP) {
         List<LockBuyPx> lockBuyPxes = lockBuyPxService.findByUserId(lockBuyPxP);
-        return new MsgConfig("200",null,lockBuyPxes);
+        return new MsgConfig("200", null, lockBuyPxes);
     }
 
     /**
      * 回调新增订单
+     *
      * @param lockBuyPxP
      * @return
      */
     @RequestMapping(value = "/insertOrder", method = RequestMethod.POST)
-    public MsgConfig insertOrder(@RequestBody OrderInfo orderInfo, @RequestHeader("token") String token) {
+    public MsgConfig insertOrder(@RequestBody OrderInfo orderInfo) {
         SysUser sysUser = new SysUser();
         sysUser.setUserId(orderInfo.getUserId());
         sysUser = mongoDBDaoImp.queryOne(sysUser);
-        if (!sysUser.getToken().equals(token)) {
+        if (!sysUser.getToken().equals(orderInfo.getToken())) {
             return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
         }
         //用户购买后解除锁定
         LockBuyPx lockBuyPx = new LockBuyPx();
-        lockBuyPx.setXAndY(orderInfo.getX(),orderInfo.getY());
+        lockBuyPx.setXAndY(orderInfo.getX(), orderInfo.getY());
         lockBuyPx.setLockStatus(0);
         lockBuyPx.setUserId(orderInfo.getUserId());
         lockBuyPxService.updateLock(lockBuyPx);
         MsgConfig msgConfig = orderInfoService.insertOrderInfo(orderInfo);
         try {
-            PxBuySocket.sendByUserId(8318,orderInfo);
+            PxBuySocket.sendByUserId(8318, orderInfo);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -255,19 +273,18 @@ public class PxInfoController {
     }
 
 
-
     @RequestMapping(value = "/sendSocket", method = RequestMethod.POST)
-    public void send(){
+    public void send() {
         try {
-            PxBuySocket.sendByUserId(8318,"兄弟我给你发信息了");
+            PxBuySocket.sendByUserId(8318, "兄弟我给你发信息了");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @RequestMapping(value = "/getBuyLockList", method = RequestMethod.POST)
-    public MsgConfig getBuyLockList(@RequestBody LockBuyPx lockBuyPx){
+    public MsgConfig getBuyLockList(@RequestBody LockBuyPx lockBuyPx) {
         List<LockBuyPx> lockBuyPxes = lockBuyPxService.findByUserId(lockBuyPx);
-        return new MsgConfig("200",null,lockBuyPxes);
+        return new MsgConfig("200", null, lockBuyPxes);
     }
 }

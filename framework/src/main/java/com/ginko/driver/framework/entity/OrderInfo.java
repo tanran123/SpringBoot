@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "sys_order_info")
-public class OrderInfo implements Serializable {
+public class OrderInfo extends CommandEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -33,6 +33,8 @@ public class OrderInfo implements Serializable {
     private String updateTime;
 
     private String des;
+
+    private String txId;
 
     private int moneyType;   //（0为买入，1位卖出）
 
@@ -128,5 +130,13 @@ public class OrderInfo implements Serializable {
 
     public void setMoneyType(int moneyType) {
         this.moneyType = moneyType;
+    }
+
+    public String getTxId() {
+        return txId;
+    }
+
+    public void setTxId(String txId) {
+        this.txId = txId;
     }
 }

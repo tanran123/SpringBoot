@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "px_user_info")
-public class PxUserInfo implements Serializable {
+public class PxUserInfo extends CommandEntity implements Serializable {
 
 
     private static final long serialVersionUID = 6315911633973351853L;

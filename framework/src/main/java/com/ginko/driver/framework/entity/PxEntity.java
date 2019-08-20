@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import javax.persistence.*;
 import java.io.Serializable;
 
-public class PxEntity implements Serializable {
+public class PxEntity extends CommandEntity implements Serializable {
     private static final long serialVersionUID = -2964339263179051386L;
 
 

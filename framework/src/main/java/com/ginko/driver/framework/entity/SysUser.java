@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "sys_user")
-public class SysUser {
+public class SysUser extends CommandEntity {
     @Id
     @Indexed
     private int userId;

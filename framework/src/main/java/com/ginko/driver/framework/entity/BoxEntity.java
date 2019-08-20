@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.lang.annotation.Documented;
 
 
-public class BoxEntity implements Serializable {
+public class BoxEntity implements Serializable{
 
     private static final long serialVersionUID = -6180932487320579619L;
     @Id

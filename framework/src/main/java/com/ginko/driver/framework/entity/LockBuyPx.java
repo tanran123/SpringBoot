@@ -9,7 +9,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "lock_buy_px")
-public class LockBuyPx {
+public class LockBuyPx extends CommandEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
