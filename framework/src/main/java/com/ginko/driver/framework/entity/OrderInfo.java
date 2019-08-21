@@ -38,6 +38,9 @@ public class OrderInfo extends CommandEntity implements Serializable {
 
     private int moneyType;   //（0为买入，1位卖出）
 
+    @Transient
+    private int sellerId;
+
     public int getId() {
         return id;
     }
@@ -138,5 +141,13 @@ public class OrderInfo extends CommandEntity implements Serializable {
 
     public void setTxId(String txId) {
         this.txId = txId;
+    }
+
+    public int getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
     }
 }

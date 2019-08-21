@@ -26,6 +26,6 @@ public interface PxUserInfoDao extends CrudRepository<PxUserInfo,Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "update px_user_info set user_id=?4, advert=?2, amount=?3,is_sell_status = ?5, update_time = DATE_FORMAT(NOW(),'%Y-%m-%d %T') where id=?1",nativeQuery = true)
-    int updatePxUserInfo(int id,String advert, BigDecimal amount,int userId,int sellStatus);
+    @Query(value = "update px_user_info set user_id=?3, advert=?1, amount=?2,is_sell_status = ?4, update_time = DATE_FORMAT(NOW(),'%Y-%m-%d %T') where x=?5 and y = ?6",nativeQuery = true)
+    int updatePxUserInfo(String advert, BigDecimal amount,int userId,int sellStatus,int x,int y);
 }

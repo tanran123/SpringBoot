@@ -28,7 +28,7 @@ public class PxUserInfoService {
 
 
     public int updatePxUserInfo(PxUserInfo pxUserInfo){
-        return pxUserInfoDao.updatePxUserInfo(pxUserInfo.getId(),pxUserInfo.getAdvert(),pxUserInfo.getAmount(),pxUserInfo.getUserId(),pxUserInfo.getIsSellStatus());
+        return pxUserInfoDao.updatePxUserInfo(pxUserInfo.getAdvert(),pxUserInfo.getAmount(),pxUserInfo.getUserId(),pxUserInfo.getIsSellStatus(),pxUserInfo.getX(),pxUserInfo.getY());
     }
 
     public PxUserInfo insertPxUserInfo(PxUserInfo pxUserInfo){

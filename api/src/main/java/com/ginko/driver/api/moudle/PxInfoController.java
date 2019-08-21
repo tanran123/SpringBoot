@@ -75,9 +75,22 @@ public class PxInfoController {
         pxEntity.setY(pxEntityP.getY());
         List<PxEntity> pxEntities = mongoPxDaoImp.queryList(pxEntity);
         if (pxEntities.size() > 0) {
-          /*  if (pxEntityP.getUserId() != pxEntities.get(0).getUserId()) {
-                return new MsgConfig("401", "这块地属于别的大佬", null);
-            }*/
+//            看是否在私有区内
+            if (pxEntityP.getX() >= 300 && pxEntityP.getX() < 900 && pxEntityP.getY() >= 200 && pxEntityP.getY() <= 600) {
+//                点不属于他
+                if (pxEntityP.getUserId() != pxEntities.get(0).getUserId()) {
+                    return new MsgConfig("402", "不能在其他私有场地涂画哦", null);
+                }
+//                点属于他判断当前TOKEN
+                else{
+                    SysUser sysUser = new SysUser();
+                    sysUser.setUserId(pxEntityP.getUserId());
+                    sysUser = mongoDBDaoImp.queryOne(sysUser);
+                    if (!sysUser.getToken().equals(pxEntityP.getToken())) {
+                        return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
+                    }
+                }
+            }
             //存在则修改像素信息
             pxEntity.setR(pxEntityP.getR());
             pxEntity.setG(pxEntityP.getG());
@@ -87,6 +100,10 @@ public class PxInfoController {
         }
         //不存在则新增像素信息
         else {
+            if (pxEntityP.getX() >= 300 && pxEntityP.getX() < 900 &&
+                    pxEntityP.getY() >= 200 && pxEntityP.getY() <= 600){
+                return new MsgConfig("402", "不能在其他私有场地涂画哦", null);
+            }
             pxEntity.setUserId(pxEntityP.getUserId());
             pxEntity.setR(pxEntityP.getR());
             pxEntity.setG(pxEntityP.getG());
@@ -148,7 +165,7 @@ public class PxInfoController {
                 return new MsgConfig("402", "点已被修改", null);
             }
             pxUserInfo.setAmount(pxUserInfoP.getAmount());
-            pxUserInfo.setAdvert(pxUserInfo.getAdvert());
+            pxUserInfo.setAdvert(pxUserInfoP.getAdvert());
             pxUserInfo.setIsSellStatus(pxUserInfoP.getIsSellStatus());
             pxUserInfoService.updatePxUserInfo(pxUserInfo);
             return new MsgConfig("200", "修改成功", pxUserInfo);
@@ -254,7 +271,7 @@ public class PxInfoController {
         lockBuyPxService.updateLock(lockBuyPx);
         MsgConfig msgConfig = orderInfoService.insertOrderInfo(orderInfo);
         try {
-            PxBuySocket.sendByUserId(8318, orderInfo);
+            PxBuySocket.sendByUserId(orderInfo.getSellerId(), orderInfo);
         } catch (IOException e) {
             e.printStackTrace();
         }
