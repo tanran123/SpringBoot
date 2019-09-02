@@ -1,6 +1,8 @@
 package com.ginko.driver.framework.dao;
 
 import com.ginko.driver.framework.entity.OrderInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -25,7 +27,9 @@ public interface OrderInfoDao extends CrudRepository<OrderInfo,Long> {
      * @param sellerId
      * @return
      */
-    List<OrderInfo> findByUserId(int userId);
+    List<OrderInfo> findByUserIdAndMoneyTypeOrderByCreateTimeDesc(int userId,int status);
+
+    Page<OrderInfo> findByUserIdAndMoneyTypeOrderByCreateTimeDesc(int userId, int status, Pageable pageable);
 
 
     @Transactional

@@ -10,11 +10,13 @@ import com.ginko.driver.framework.dao.MongoPxDaoImp;
 import com.ginko.driver.framework.dao.MongoSysUserDaoImp;
 import com.ginko.driver.framework.entity.*;
 import com.ginko.driver.framework.service.LockBuyPxService;
+import com.ginko.driver.framework.service.LogInfoService;
 import com.ginko.driver.framework.service.OrderInfoService;
 import com.ginko.driver.framework.service.PxUserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -41,6 +43,9 @@ public class PxInfoController {
 
     @Autowired
     private LockBuyPxService lockBuyPxService;
+
+    @Autowired
+    private LogInfoService logInfoService;
 
     @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
     public MsgConfig getUserInfo() {
@@ -82,7 +87,7 @@ public class PxInfoController {
                     return new MsgConfig("402", "不能在其他私有场地涂画哦", null);
                 }
 //                点属于他判断当前TOKEN
-                else{
+                else {
                     SysUser sysUser = new SysUser();
                     sysUser.setUserId(pxEntityP.getUserId());
                     sysUser = mongoDBDaoImp.queryOne(sysUser);
@@ -101,7 +106,7 @@ public class PxInfoController {
         //不存在则新增像素信息
         else {
             if (pxEntityP.getX() >= 300 && pxEntityP.getX() < 900 &&
-                    pxEntityP.getY() >= 200 && pxEntityP.getY() <= 600){
+                    pxEntityP.getY() >= 200 && pxEntityP.getY() <= 600) {
                 return new MsgConfig("402", "不能在其他私有场地涂画哦", null);
             }
             pxEntity.setUserId(pxEntityP.getUserId());
@@ -128,7 +133,7 @@ public class PxInfoController {
         //不存在记录则说明这个点没卖
         if (pxUserInfo == null) {
             pxUserInfo = new PxUserInfo();
-            pxUserInfo.setUserId(0);
+            pxUserInfo.setUserId(9999999);
             pxUserInfo.setIsSellStatus(1);
             pxUserInfo.setAmount(BigDecimal.valueOf(1));
             pxUserInfo.setXAndY(pxUserInfoP.getX(), pxUserInfoP.getY());
@@ -199,7 +204,7 @@ public class PxInfoController {
         LockBuyPx lockBuyPx = lockBuyPxService.findOne(lockBuyPxP);
         //用户当前购买中的点超过最大
         int lockCount = lockBuyPxService.CountUserId(lockBuyPxP);
-        if (lockCount > 10) {
+        if (lockCount > 10 && lockBuyPxP.getLockStatus() == 1) {
             return new MsgConfig("403", "您已有10个未付款订单，请先完成付款", false);
         }
         if (lockBuyPx == null) {
@@ -210,7 +215,6 @@ public class PxInfoController {
         }
         //如果存在则锁定
         else {
-            lockBuyPxP.setLockStatus(1);
             lockBuyPxService.updateLock(lockBuyPxP);
             return new MsgConfig("200", null, true);
         }
@@ -270,8 +274,29 @@ public class PxInfoController {
         lockBuyPx.setUserId(orderInfo.getUserId());
         lockBuyPxService.updateLock(lockBuyPx);
         MsgConfig msgConfig = orderInfoService.insertOrderInfo(orderInfo);
+        LogInfo logInfo = new LogInfo();
+        logInfo.setCreateTime(DateTool.getNowTime());
+        logInfo.setMsg("您坐标为(" + orderInfo.getX() + "," + orderInfo.getY() + ")的像素点以$"+orderInfo.getAmount()+"出售");
+        logInfo.setReadStatus(1);
+        logInfo.setUserId(orderInfo.getSellerId());
+        logInfo.setLogType(2);
+        logInfoService.insertLogInfo(logInfo);
+//        给SELLER发送信息
         try {
-            PxBuySocket.sendByUserId(orderInfo.getSellerId(), orderInfo);
+            PxBuySocket.sendByUserId(orderInfo.getSellerId(), logInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LogInfo logInfo1 = new LogInfo();
+        logInfo1.setMsg("您以$"+orderInfo.getAmount()+"购买坐标为(" + orderInfo.getX() + "," + orderInfo.getY() + ")的像素点");
+        logInfo1.setUserId(orderInfo.getUserId());
+        logInfo1.setLogType(1);
+        logInfo1.setCreateTime(DateTool.getNowTime());
+        logInfo1.setReadStatus(1);
+        logInfoService.insertLogInfo(logInfo1);
+//发送信息嗷
+        try {
+            PxBuySocket.sendByUserId(orderInfo.getUserId(), logInfo1);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -292,5 +317,29 @@ public class PxInfoController {
     public MsgConfig getBuyLockList(@RequestBody LockBuyPx lockBuyPx) {
         List<LockBuyPx> lockBuyPxes = lockBuyPxService.findByUserId(lockBuyPx);
         return new MsgConfig("200", null, lockBuyPxes);
+    }
+
+
+    /**
+     * 获取订单表
+     * @param orderInfo
+     * @return
+     */
+    @RequestMapping(value = "/getOrderList",method = RequestMethod.POST)
+    public MsgConfig getOrderList(@RequestBody OrderInfo orderInfo){
+        List<OrderInfo> orderInfoList = orderInfoService.findByUserId(orderInfo);
+        return new MsgConfig("200", null, orderInfoList);
+    }
+
+
+    /**
+     * 获取订单表(分页)
+     * @param orderInfo
+     * @return
+     */
+    @RequestMapping(value = "/getOrderListPage",method = RequestMethod.POST)
+    public MsgConfig getOrderListPage(@RequestBody OrderInfo orderInfo){
+        Page<OrderInfo> orderInfoList = orderInfoService.findByUserIdAndPage(orderInfo);
+        return new MsgConfig("200", null, orderInfoList);
     }
 }

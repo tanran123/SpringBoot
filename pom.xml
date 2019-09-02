@@ -7,6 +7,7 @@
     <groupId>com.ginko.driver</groupId>
     <artifactId>pan</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <dependencyManagement>
         <dependencies>
@@ -21,7 +22,6 @@
         <module>api</module>    <!--接口-->
         <module>common</module> <!--公共类-->
         <module>framework</module>  <!--框架相关-->
-        <module>service</module>    <!--业务相关-->
     </modules>
 
 </project>

@@ -640,7 +640,7 @@ public class DateTool {
 		try {
 			Date d2 = df.parse(getNowTime());
 			Date d1 = df.parse(date);
-			long diff = d1.getTime() - d2.getTime();//这样得到的差值是毫秒级别
+			long diff = d2.getTime() - d1.getTime();//这样得到的差值是毫秒级别
 			minutes = (diff/(1000 * 60));
 		} catch (Exception e) {
 			log.error(e.getMessage());

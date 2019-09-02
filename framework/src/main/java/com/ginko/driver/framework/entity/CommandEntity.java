@@ -11,6 +11,12 @@ public class CommandEntity {
     @Transient
     private String token;
 
+    @Transient
+    private int page;
+
+    @Transient
+    private int size;
+
     public String getToken() {
         return token;
     }
@@ -19,4 +25,19 @@ public class CommandEntity {
         this.token = token;
     }
 
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 }

@@ -23,10 +23,10 @@ public interface LockBuyPxDao extends CrudRepository<LockBuyPx,Long> {
 
     LockBuyPx findByXAndY(int x,int y);
 
-    @Query(value = "select id,user_id,x,y,lock_time,lock_status,seller_id,amount from lock_buy_px where user_id=?1 and lock_status = ?2 and TIMESTAMPDIFF(MINUTE,lock_time,NOW())<15",nativeQuery = true)
+    @Query(value = "select id,user_id,x,y,lock_time,lock_status,seller_id,amount from lock_buy_px where user_id=?1 and lock_status = ?2 and TIMESTAMPDIFF(MINUTE,lock_time,NOW())<15 order by id desc",nativeQuery = true)
     List<LockBuyPx> findByUserIdAndLockStatus(int userId,int lockStatus);
 
-    @Query(value = "select COUNT(id) from lock_buy_px where user_id=?1 and lock_status = ?2 and TIMESTAMPDIFF(MINUTE,lock_time,NOW())<15",nativeQuery = true)
+    @Query(value = "select COUNT(id) from lock_buy_px where user_id=?1 and lock_status = 1 and TIMESTAMPDIFF(MINUTE,lock_time,NOW())<15",nativeQuery = true)
     int countByUserIdAndLockStatus(int userId,int lockStatus);
 
 

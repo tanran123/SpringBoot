@@ -60,6 +60,7 @@ public class UserController {
         return new MsgConfig("200",null,list);
     }
 
+
     @RequestMapping(value = "/updateLogInfoStatus", method = RequestMethod.POST)
     public MsgConfig updateLogInfoStatus(@RequestBody LogInfo logInfo){
          logInfoService.updateLogInfo(logInfo);

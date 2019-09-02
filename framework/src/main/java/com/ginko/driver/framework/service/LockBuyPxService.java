@@ -35,7 +35,6 @@ public class LockBuyPxService {
     }
 
     public int CountUserId(LockBuyPx lockBuyPx){
-         lockBuyPx.setLockStatus(1);
          return lockBuyPxDao.countByUserIdAndLockStatus(lockBuyPx.getUserId(),lockBuyPx.getLockStatus());
     }
 }

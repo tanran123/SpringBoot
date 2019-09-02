@@ -9,6 +9,8 @@ import com.ginko.driver.framework.entity.OrderInfo;
 import com.ginko.driver.framework.entity.PxEntity;
 import com.ginko.driver.framework.entity.PxUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -51,6 +53,7 @@ public class OrderInfoService {
             pxUserInfo.setAdvert("");
             pxUserInfo.setUserId(orderInfoP.getUserId());
             pxUserInfo.setAmount(orderInfoP.getAmount());
+            pxUserInfo.setBa(orderInfoP.getAmount());
             pxUserInfoService.insertPxUserInfo(pxUserInfo);
 
             //插入购买记录
@@ -97,6 +100,7 @@ public class OrderInfoService {
             pxUserInfo1.setAdvert("");
             pxUserInfo1.setUserId(orderInfoP.getUserId());
             pxUserInfo1.setAmount(orderInfoP.getAmount());
+            pxUserInfo.setBa(orderInfoP.getAmount());
             pxUserInfoService.updatePxUserInfo(pxUserInfo1);
 
             orderInfoP.setCreateTime(DateTool.getNowTime());
@@ -125,11 +129,17 @@ public class OrderInfoService {
     }
 
     public List<OrderInfo> findByUserId(OrderInfo orderInfo){
-        return orderInfoDao.findByUserId(orderInfo.getUserId());
+        return orderInfoDao.findByUserIdAndMoneyTypeOrderByCreateTimeDesc(orderInfo.getUserId(),orderInfo.getMoneyType());
     }
 
+
+    public Page<OrderInfo> findByUserIdAndPage(OrderInfo orderInfo){
+        return orderInfoDao.findByUserIdAndMoneyTypeOrderByCreateTimeDesc(orderInfo.getUserId(),orderInfo.getMoneyType(),PageRequest.of(orderInfo.getPage()-1,orderInfo.getSize()));
+    }
 
     public int update(OrderInfo orderInfo){
         return orderInfoDao.updateOrderTransactionStatus(orderInfo.getId(),orderInfo.getTransactionStatus());
     }
+
+
 }

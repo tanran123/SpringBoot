@@ -24,6 +24,8 @@ public class LogInfo extends CommandEntity{
 
     private String updateTime;
 
+    private int logType;    //0为系统消息，12为买卖交易消息
+
     public int getId() {
         return id;
     }
@@ -70,5 +72,13 @@ public class LogInfo extends CommandEntity{
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public int getLogType() {
+        return logType;
+    }
+
+    public void setLogType(int logType) {
+        this.logType = logType;
     }
 }

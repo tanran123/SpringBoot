@@ -23,7 +23,7 @@ public class LogInfoService {
     }
 
     public List<LogInfo> findByUserIdAndReadStatus(LogInfo logInfo){
-       return logInfoDao.findByUserIdAndReadStatus(logInfo.getUserId(),logInfo.getReadStatus());
+       return logInfoDao.findByUserIdAndReadStatusOrderByCreateTimeDesc(logInfo.getUserId(),logInfo.getReadStatus());
     }
 
     public int updateLogInfo(LogInfo logInfo){

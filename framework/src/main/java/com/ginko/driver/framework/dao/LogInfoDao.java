@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public interface LogInfoDao extends CrudRepository<LogInfo,Long> {
 
-    List<LogInfo> findByUserIdAndReadStatus(int userId, int readStatus);
+    List<LogInfo> findByUserIdAndReadStatusOrderByCreateTimeDesc(int userId, int readStatus);
 
     @Transactional
     @Modifying

@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Component
 public class PxBuySocket {
     /**
-     * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
+     * 记录当前在线连接数
      */
     private static int onlineCount = 0;
     /**
@@ -100,7 +100,6 @@ public class PxBuySocket {
     public static void sendByUserId(int userId,Object message) throws IOException{
         Arrays.asList(webSocketSet.toArray()).forEach(item -> {
             PxBuySocket PxBuySocket = (PxBuySocket) item;
-            //群发
             try {
                 if (userId == PxBuySocket.getUserId()){
                     String json = JSON.toJSONString(new MsgConfig("200",null,message));

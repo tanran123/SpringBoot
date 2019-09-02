@@ -22,7 +22,7 @@ public interface PxUserInfoDao extends CrudRepository<PxUserInfo,Long> {
 
     PxUserInfo findByXAndY(int x,int y);
 
-    List<PxUserInfo> findByUserId(long id);
+    List<PxUserInfo> findByUserId(int id);
 
     @Transactional
     @Modifying

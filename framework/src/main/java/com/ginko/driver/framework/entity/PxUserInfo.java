@@ -27,6 +27,8 @@ public class PxUserInfo extends CommandEntity implements Serializable {
 
     private BigDecimal amount = BigDecimal.valueOf(0);
 
+    private BigDecimal ba = BigDecimal.valueOf(0);
+
     private String updateTime = "";
 
     public int getId() {
@@ -97,5 +99,13 @@ public class PxUserInfo extends CommandEntity implements Serializable {
 
     public void setIsSellStatus(int isSellStatus) {
         this.isSellStatus = isSellStatus;
+    }
+
+    public BigDecimal getBa() {
+        return ba;
+    }
+
+    public void setBa(BigDecimal ba) {
+        this.ba = ba;
     }
 }

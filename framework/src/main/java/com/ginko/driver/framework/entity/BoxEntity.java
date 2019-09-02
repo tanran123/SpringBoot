@@ -62,4 +62,8 @@ public class BoxEntity implements Serializable{
     public void setColor(String color) {
         this.color = color;
     }
+
+    public static void main(String[] args) {
+
+    }
 }
