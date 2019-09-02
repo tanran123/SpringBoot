@@ -151,12 +151,6 @@ public class PxInfoController {
      */
     @RequestMapping(value = "/updateAdvertOrAmount", method = RequestMethod.POST)
     public MsgConfig updateAdvertOrAmount(@RequestBody PxUserInfo pxUserInfoP) {
-        SysUser sysUser = new SysUser();
-        sysUser.setUserId(pxUserInfoP.getUserId());
-        sysUser = mongoDBDaoImp.queryOne(sysUser);
-        if (!sysUser.getToken().equals(pxUserInfoP.getToken())) {
-            return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
-        }
         PxUserInfo pxUserInfo = pxUserInfoService.findByXAndY(pxUserInfoP);
         //不存在则新增记录
         if (pxUserInfo == null) {
