@@ -79,21 +79,16 @@ public class PxInfoController {
         pxEntity.setX(pxEntityP.getX());
         pxEntity.setY(pxEntityP.getY());
         List<PxEntity> pxEntities = mongoPxDaoImp.queryList(pxEntity);
+        PxUserInfo pxUserInfo = new PxUserInfo();
+        pxUserInfo.setXAndY(pxEntityP.getX(),pxEntityP.getY());
+        pxUserInfo = pxUserInfoService.findByXAndY(pxUserInfo);
+
         if (pxEntities.size() > 0) {
 //            看是否在私有区内
             if (pxEntityP.getX() >= 300 && pxEntityP.getX() < 900 && pxEntityP.getY() >= 200 && pxEntityP.getY() <= 600) {
 //                点不属于他
-                if (pxEntityP.getUserId() != pxEntities.get(0).getUserId()) {
+                if (pxEntityP.getUserId() != pxUserInfo.getUserId()) {
                     return new MsgConfig("402", "不能在其他私有场地涂画哦", null);
-                }
-//                点属于他判断当前TOKEN
-                else {
-                    SysUser sysUser = new SysUser();
-                    sysUser.setUserId(pxEntityP.getUserId());
-                    sysUser = mongoDBDaoImp.queryOne(sysUser);
-                    if (!sysUser.getToken().equals(pxEntityP.getToken())) {
-                        return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
-                    }
                 }
             }
             //存在则修改像素信息
@@ -107,7 +102,10 @@ public class PxInfoController {
         else {
             if (pxEntityP.getX() >= 300 && pxEntityP.getX() < 900 &&
                     pxEntityP.getY() >= 200 && pxEntityP.getY() <= 600) {
-                return new MsgConfig("402", "不能在其他私有场地涂画哦", null);
+                int userId = pxUserInfo==null?0:pxUserInfo.getUserId();
+                if (pxEntityP.getUserId() != userId) {
+                    return new MsgConfig("402", "不能在其他私有场地涂画哦", null);
+                }
             }
             pxEntity.setUserId(pxEntityP.getUserId());
             pxEntity.setR(pxEntityP.getR());

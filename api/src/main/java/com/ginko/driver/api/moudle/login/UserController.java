@@ -66,4 +66,10 @@ public class UserController {
          logInfoService.updateLogInfo(logInfo);
         return new MsgConfig("200",null,null);
     }
+
+
+    @RequestMapping(value = "/test")
+    public void test(@RequestBody Object o){
+        System.out.println(o);
+    }
 }
