@@ -3,22 +3,13 @@ package com.ginko.driver.api.config;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ginko.driver.common.entity.MsgConfig;
-import com.ginko.driver.common.exception.MsgEnum;
-import com.ginko.driver.framework.dao.MongoSysUserDaoImp;
-import com.ginko.driver.framework.entity.SysUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * @Author: tran

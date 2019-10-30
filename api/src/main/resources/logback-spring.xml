@@ -27,8 +27,8 @@
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<FileNamePattern>
-			D:/log/api_log_%d{yyyy-MM-dd}.log
-			<!-- /DATA/opt/app/jdk8api/logs/datastar_api_logs/api_log_%d{yyyy-MM-dd}.log -->
+		<!--	D:/log/api_log_%d{yyyy-MM-dd}.log-->
+			 /DATA/logs/api_logs/api_log_%d{yyyy-MM-dd}.log
 				<!-- D:/logs/datastar_interface_%d{yyyy-MM-dd}.log -->
 			</FileNamePattern>
 		</rollingPolicy>
