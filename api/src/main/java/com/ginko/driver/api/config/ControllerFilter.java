@@ -18,9 +18,9 @@ import java.io.IOException;
  */
 public class ControllerFilter implements Filter {
 
-    @Autowired
+   /* @Autowired
     private MongoSysUserDaoImp mongoDBDaoImp;
-
+*/
 
     Logger logger = LoggerFactory.getLogger(ControllerFilter.class);
     @Override
@@ -32,9 +32,9 @@ public class ControllerFilter implements Filter {
         logger.info(body);
         JSON json = JSON.parseObject(body);
         String url = httpServletRequest.getRequestURI();
-        /*是否为初始化画板方法*/
+       /* *//*是否为初始化画板方法*//*
         if (url.indexOf("/px/getMongo")==-1){
-            /*token验证*/
+            *//*token验证*//*
             String token = ((JSONObject) json).getString("token");
             SysUser sysUser = new SysUser();
             sysUser.setUserId(((JSONObject) json).getInteger("userId"));
@@ -42,7 +42,7 @@ public class ControllerFilter implements Filter {
             if (!token.equals(sysUser.getToken())) {
                 servletRequest.getRequestDispatcher("/401").forward(servletRequest, servletResponse);
             }
-        }
+        }*/
         filterChain.doFilter(requestWrapper, servletResponse);
     }
 
