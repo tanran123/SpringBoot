@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @Date Create in 21:54 2019/8/17
  */
 
-@ServerEndpoint(value = "/pxBuy/websocket")
+@ServerEndpoint(value = "/timesv/partner")
 @Component
 public class PxBuySocket {
     /**
@@ -35,7 +35,7 @@ public class PxBuySocket {
 
     private String code;
 
-    private Integer userId;
+    private Integer userCode;
 
 
 
@@ -75,9 +75,9 @@ public class PxBuySocket {
     @OnMessage
     public void onMessage(String message, Session session) {
         JSON json = JSON.parseObject(message);
-        if (userId==null){
-            String userId = ((JSONObject) json).getString("userId");
-            setUserId(Integer.parseInt(userId));
+        if (userCode==null){
+            String userCode = ((JSONObject) json).getString("userCode");
+            setUserCode(Integer.parseInt(userCode));
         }
         System.out.println("客户端发送的消息：" + session.getId());
     }
@@ -97,12 +97,12 @@ public class PxBuySocket {
      * @param message
      * @throws IOException
      */
-    public static void sendByUserId(int userId,Object message) throws IOException{
+    public static void sendByUserId(int userCode,Object message) throws IOException{
         Arrays.asList(webSocketSet.toArray()).forEach(item -> {
             PxBuySocket PxBuySocket = (PxBuySocket) item;
             try {
-                if (userId == PxBuySocket.getUserId()){
-                    String json = JSON.toJSONString(new MsgConfig("200",null,message));
+                if (userCode == PxBuySocket.getUserCode()){
+                    String json = JSON.toJSONString(new MsgConfig(200,null,message));
                     PxBuySocket.sendMessage(json);
                 }
             } catch (IOException e) {
@@ -183,11 +183,12 @@ public class PxBuySocket {
         this.code = code;
     }
 
-    public int getUserId() {
-        return userId;
+    public Integer getUserCode() {
+        return userCode;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+
+    public void setUserCode(Integer userCode) {
+        this.userCode = userCode;
     }
 }
