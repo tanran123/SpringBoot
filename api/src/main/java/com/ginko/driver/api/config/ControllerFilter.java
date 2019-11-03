@@ -31,7 +31,6 @@ public class ControllerFilter implements Filter {
         String body = requestWrapper.getBody();
         logger.info(body);
         JSON json = JSON.parseObject(body);
-        String url = httpServletRequest.getRequestURI();
        /* *//*是否为初始化画板方法*//*
         if (url.indexOf("/px/getMongo")==-1){
             *//*token验证*//*

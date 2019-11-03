@@ -105,7 +105,7 @@ public class CustomerWebSoket {
             //群发
             try {
                 if (userId == customWebSocket.getUserId()){
-                    String json = JSON.toJSONString(new MsgConfig(200,null,message));
+                    String json = JSON.toJSONString(new MsgConfig("0",null,message));
                     customWebSocket.sendMessage(json);
                 }
             } catch (IOException e) {

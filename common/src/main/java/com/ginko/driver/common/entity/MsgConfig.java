@@ -1,28 +1,28 @@
 package com.ginko.driver.common.entity;
 
 public class MsgConfig {
-    private Integer code;
+    private String code;
 
     private String msg;
 
     private Object data;
 
-    public MsgConfig(Integer code, String msg, Object data){
+    public MsgConfig(String code, String msg, Object data){
         this.code = code;
         this.msg = msg;
         this.data = data;
     }
 
-    public MsgConfig(Integer code, String msg) {
+    public MsgConfig(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

@@ -102,7 +102,7 @@ public class PxBuySocket {
             PxBuySocket PxBuySocket = (PxBuySocket) item;
             try {
                 if (userCode == PxBuySocket.getUserCode()){
-                    String json = JSON.toJSONString(new MsgConfig(200,null,message));
+                    String json = JSON.toJSONString(new MsgConfig("0",null,message));
                     PxBuySocket.sendMessage(json);
                 }
             } catch (IOException e) {

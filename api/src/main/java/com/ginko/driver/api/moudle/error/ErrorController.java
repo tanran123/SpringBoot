@@ -16,6 +16,6 @@ public class ErrorController {
 
     @RequestMapping(value = "/401",method = RequestMethod.POST)
     public MsgConfig post404(){
-        return new MsgConfig(401, MsgEnum.NOROLEAUTH.getDesc(), null);
+        return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
     }
 }

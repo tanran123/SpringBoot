@@ -8,30 +8,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
 
-@Configuration
+/*@Configuration
 public class FilterConfig implements WebMvcConfigurer {
     @Bean
-    public Filter generalFilter() {
+    public Filter newuserFilter() {
         return new ControllerFilter();
     }
 
     @Bean
     public FilterRegistrationBean userFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new DelegatingFilterProxy("generalFilter"));
-        registration.addUrlPatterns("/Sv/user/*");
-        registration.setName("generalFilter");
+        registration.setFilter(new DelegatingFilterProxy("ControllerFilter"));
+        registration.addUrlPatterns("/*");
+        registration.setName("filter");
         registration.setOrder(1);
         return registration;
     }
 
-    @Bean
+   *//* @Bean
     public FilterRegistrationBean pxFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new DelegatingFilterProxy("generalFilter"));
-        registration.addUrlPatterns("/Sv/px/*");
-        registration.setName("generalFilter");
-        registration.setOrder(1);
+        registration.setFilter(new DelegatingFilterProxy("newpxFilter"));
+        registration.addUrlPatterns("/*");
+        registration.setName("newpxFilter");
+        registration.setOrder(2);
         return registration;
-    }
-}
+    }*//*
+}*/
