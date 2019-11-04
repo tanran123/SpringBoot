@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Auther: tran
@@ -29,7 +26,7 @@ import java.util.List;
  */
 @RequestMapping("/partner")
 @RestController
-public class partnerController {
+public class PartnerController {
     private static PartnerData partnerData = new PartnerData();
     private static BigDecimal price = new BigDecimal("1000.00");
     private static BigDecimal currentPrice = new BigDecimal("1000.00");
@@ -58,14 +55,16 @@ public class partnerController {
     }
 
     /**
-     * 查看当天合伙人是否流拍
+     * 查看当天合伙人是否流拍及添加明日合伙人记录
      */
-    @Scheduled(cron = "59 59 23 * * ?")
+    @Scheduled(cron = "0 59 23 * * ?")
     public void updateTody() {
         //判断今日合伙人是否已出售
         if (partnerService.findByPartnerDay(getNowDate(0)).getSellStatus()==0){
+            //将合伙人划分到平台账户
             addUserPartner();
         }
+        //添加明日合伙人记录
         addPartner(1);
     }
 
@@ -87,7 +86,6 @@ public class partnerController {
         if (partnerService.findByPartnerDay(getNowDate(0))==null){
             addPartner(0);
         }
-
         partnerData.view();
         addPrice();
         return new MsgConfig("0", null, partnerData);
@@ -179,13 +177,17 @@ public class partnerController {
     }
 
     public UserPartner addUserPartner(){
+        //生成UUID给partner当唯一标识
+        UUID uuid  =  UUID.randomUUID();
+        String id=uuid.toString();
+        id=id.replace("-", "");//替换掉中间的那个横杠
+
         UserPartner userPartner = new UserPartner();
         userPartner.setButDateTime("");
         userPartner.setPartnerDay(getNowDate(0));
         userPartner.setPartnerStatus(0);
         userPartner.setSellTime("");
         userPartner.setUserId(0);
-        userPartner.setSellStatus(0);
         return userPartnerService.addUserPartner(userPartner);
     }
 
@@ -212,6 +214,6 @@ public class partnerController {
         if (partner.getSellStatus()==0){
             return new MsgConfig("107",null,null);
         }
-
+        return null;
     }
 }

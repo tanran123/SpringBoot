@@ -28,6 +28,14 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
      * 查询用户持有的所有
      * @return
      */
+    @Query(value = "SELECT\n" +
+            "\t* \n" +
+            "FROM\n" +
+            "\tuser_partner u\n" +
+            "\tleft JOIN partner p ON p.partner_id = u.partner_id \n" +
+            "\tAND user_id = partner_user_id \n" +
+            "WHERE\n" +
+            "\tuser_id = ?1",nativeQuery = true)
     List<UserPartner> findByUserId(int userId);
 
 

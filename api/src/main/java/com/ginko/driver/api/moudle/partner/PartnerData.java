@@ -16,7 +16,6 @@ public class PartnerData {
     private  List<String> dataTime = new ArrayList<>();
     private  List<BigDecimal> priceData = new ArrayList<>();
     private int viewCount =0;
-
     private Partner partner=null;
 
     public List<String> getDataTime() {
