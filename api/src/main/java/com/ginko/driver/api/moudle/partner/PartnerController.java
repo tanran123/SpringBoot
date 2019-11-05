@@ -47,7 +47,7 @@ public class PartnerController {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
-        currentPrice=currentPrice.subtract(new BigDecimal("3.45"));
+        currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
         String nowHour = hour < 10 ? "0" + hour : String.valueOf(hour);
         String nowMin = min < 10 ? "0" + min : String.valueOf(min);
         partnerData.getDataTime().add(nowHour + ":" + nowMin);
@@ -60,7 +60,7 @@ public class PartnerController {
     @Scheduled(cron = "0 59 23 * * ?")
     public void updateTody() {
         //判断今日合伙人是否已出售
-        if (partnerService.findByPartnerDay(getNowDate(0)).getSellStatus()==0){
+        if (partnerService.findByPartnerDay(getNowDate(0)).getSellStatus() == 0) {
             //将合伙人划分到平台账户
             addUserPartner();
         }
@@ -83,13 +83,26 @@ public class PartnerController {
     @RequestMapping(value = "/getAllPrice")
     public MsgConfig getAllPrice() {
         //如果今日合伙人为空
-        if (partnerService.findByPartnerDay(getNowDate(0))==null){
+        if (partnerService.findByPartnerDay(getNowDate(0)) == null) {
             addPartner(0);
         }
         partnerData.view();
         addPrice();
         return new MsgConfig("0", null, partnerData);
     }
+
+    /**
+     * 获取今日partner
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getTodayPartner")
+    public MsgConfig getTodayPartner() {
+        //如果今日合伙人为空
+        Partner partner = partnerService.findByPartnerDay(getNowDate(0));
+        return new MsgConfig("0", null, partner);
+    }
+
 
     /**
      * 非首次加载
@@ -100,7 +113,8 @@ public class PartnerController {
     public MsgConfig getPrice() {
         return new MsgConfig("0", null, partnerData);
     }
-    public static void addPrice(){
+
+    public static void addPrice() {
         if (partnerData.getPriceData().size() == 0) {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -113,7 +127,7 @@ public class PartnerController {
                 stringBufferHour.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
                 for (int j = 0; j < 12; j++) {
                     stringBuffer.setLength(0);
-                    currentPrice=currentPrice.subtract(new BigDecimal("3.45"));
+                    currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
                     partnerData.getPriceData().add(currentPrice);
                     int oldMin = j * 5;
                     stringBuffer.append(oldMin < 10 ? "0" + String.valueOf(oldMin) : String.valueOf(oldMin));
@@ -124,7 +138,7 @@ public class PartnerController {
             StringBuffer stringBufferMin = new StringBuffer("");
             for (int i = 0; i <= min; i += 5) {
                 stringBufferMin.setLength(0);
-                currentPrice=currentPrice.subtract(new BigDecimal("3.45"));
+                currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
                 partnerData.getPriceData().add(currentPrice);
                 stringBufferMin.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
                 partnerData.getDataTime().add(hour + ":" + stringBufferMin);
@@ -167,8 +181,8 @@ public class PartnerController {
         System.out.println(partnerData);
     }*/
 
-    public Partner addPartner(int add){
-        Partner partner= new Partner();
+    public Partner addPartner(int add) {
+        Partner partner = new Partner();
         partner.setPartnerDay(getNowDate(add));
         partner.setPartnerNation("");
         partner.setPartnerUserId(0);
@@ -176,44 +190,48 @@ public class PartnerController {
         return partnerService.addPartner(partner);
     }
 
-    public UserPartner addUserPartner(){
+    public UserPartner addUserPartner() {
         //生成UUID给partner当唯一标识
-        UUID uuid  =  UUID.randomUUID();
-        String id=uuid.toString();
-        id=id.replace("-", "");//替换掉中间的那个横杠
-
+        UUID uuid = UUID.randomUUID();
+        String id = uuid.toString();
+        id = id.replace("-", "");//替换掉中间的那个横杠
         UserPartner userPartner = new UserPartner();
-        userPartner.setButDateTime("");
         userPartner.setPartnerDay(getNowDate(0));
         userPartner.setPartnerStatus(0);
-        userPartner.setSellTime("");
         userPartner.setUserId(0);
         return userPartnerService.addUserPartner(userPartner);
     }
 
-    public String getNowDate(int add){
+    public String getNowDate(int add) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH)+1;
-        int day = calendar.get(Calendar.DATE)+add;
-        String nowMonth = month<10?"0"+month:String.valueOf(month);
-        String nowDay = day<10?"0"+day:String.valueOf(day);
-        String nowDate = year+"-"+nowMonth+"-"+nowDay;
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DATE) + add;
+        String nowMonth = month < 10 ? "0" + month : String.valueOf(month);
+        String nowDay = day < 10 ? "0" + day : String.valueOf(day);
+        String nowDate = year + "-" + nowMonth + "-" + nowDay;
         return nowDate;
     }
 
-    public String getNowDateTime(){
+    public String getNowDateTime() {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         return df.format(new Date());// new Date()为获取当前系统时间
     }
 
     @RequestMapping("/successfulPayment")
-    public MsgConfig SuccessfulPayment(@RequestBody UserPartner userPartner){
+    public MsgConfig SuccessfulPayment(@RequestBody UserPartner userPartner) {
         Partner partner = partnerService.findByPartnerDay(getNowDateTime());
         /*如果已经出售*/
-        if (partner.getSellStatus()==0){
-            return new MsgConfig("107",null,null);
+        if (partner.getSellStatus() == 0) {
+            return new MsgConfig("107", null, null);
         }
         return null;
+    }
+
+
+    @RequestMapping("/buyPartner")
+    public MsgConfig buyPartner(@RequestBody UserPartner userPartner) {
+        userPartner.setBuyPrice(partnerData.getPriceData().get(partnerData.getPriceData().size()-1));
+        return partnerService.buyPartner(userPartner);
     }
 }

@@ -40,6 +40,10 @@ public class CustomerWebSoket {
 
     private String orderCode;
 
+    private int partnerId;
+
+    private String socketId;
+
 
 
     /**
@@ -94,23 +98,48 @@ public class CustomerWebSoket {
     }
 
     /**
-     * 给code发送信息
+     * 如果在交易给自身发送信息
      * @param message
      * @throws IOException
      */
-    public static void sendByOrderCode(String OrderCode,Boolean message) throws IOException{
+  /*  public void sendBySocketId(int partnerId) throws IOException{
         Arrays.asList(webSocketSet.toArray()).forEach(item -> {
             CustomerWebSoket customWebSocket = (CustomerWebSoket) item;
-            //群发
+            //判断当前是否已存在交易
             try {
-                if (StringUtils.equals(OrderCode,customWebSocket.getOrderCode())){
-                    String json = JSON.toJSONString(new MsgConfig("0",null,message));
-                    customWebSocket.sendMessage(json);
+                if (partnerId==customWebSocket.getPartnerId()){
+                    WebSocketReturnType webSocketReturnType = new WebSocketReturnType();
+                    webSocketReturnType.setResult(false);
+                    webSocketReturnType.setType("connection");
+                    String json = JSON.toJSONString(new MsgConfig("0",null,webSocketReturnType));
+                    this.sendMessage(json);
+                    this.onClose();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+    }*/
+
+    /**
+     * 给code发送信息
+     * @param message
+     * @throws IOException
+     */
+    public static void sendByOrderCode(WebSocketReturnType webSocketReturnType) throws IOException{
+        for (Object customerWebSoketA:Arrays.asList(webSocketSet.toArray())){
+            CustomerWebSoket customWebSocket = (CustomerWebSoket) customerWebSoketA;
+            //群发
+            try {
+                if (StringUtils.equals(webSocketReturnType.getOrderCode(),customWebSocket.getOrderCode())){
+                    String json = JSON.toJSONString(new MsgConfig("0",null,webSocketReturnType));
+                    customWebSocket.sendMessage(json);
+                    break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -199,5 +228,21 @@ public class CustomerWebSoket {
 
     public void setOrderCode(String orderCode) {
         this.orderCode = orderCode;
+    }
+
+    public int getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(int partnerId) {
+        this.partnerId = partnerId;
+    }
+
+    public String getSocketId() {
+        return socketId;
+    }
+
+    public void setSocketId(String socketId) {
+        this.socketId = socketId;
     }
 }

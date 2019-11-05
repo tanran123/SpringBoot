@@ -17,7 +17,7 @@ public class DateTool {
 	private static final Logger log = LoggerFactory.getLogger(DateTool.class);
 	public static final String getNowTime() {
 		return new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:dd").format(new Date());
+				"yyyy-MM-dd HH:mm:ss").format(new Date());
 	}
 
 	public static final String getTimeAdd30min() {
@@ -626,7 +626,7 @@ public class DateTool {
 		try {
 			Date d2 = df.parse(getNowTime());
 			Date d1 = df.parse(date);
-			long diff = d1.getTime() - d2.getTime();//这样得到的差值是毫秒级别
+			long diff = d2.getTime() - d1.getTime();//这样得到的差值是毫秒级别
 			hours = (diff/(1000 * 60 * 60));
 		} catch (Exception e) {
 			log.error(e.getMessage());

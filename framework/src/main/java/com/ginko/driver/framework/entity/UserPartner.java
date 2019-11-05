@@ -14,20 +14,17 @@ public class UserPartner extends CommandEntity{
     private int id;
     private int userId;
     private int partnerId;
-    private BigDecimal partnerIcome;
+    private BigDecimal partnerIncom;
+    private String buyDatetime;
+    private String sellDatetime;
     private int partnerStatus;
-    private String butDateTime;
-    private String sellTime;
-
     private String partnerDay;
-
     private int paymentStatus;
-
     private String orderId;
 
-    private String buyPrice;
+    private BigDecimal buyPrice;
 
-    private String sellPrice;
+    private BigDecimal sellPrice;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="partnerId",insertable = false,updatable = false)
@@ -58,13 +55,6 @@ public class UserPartner extends CommandEntity{
         this.partnerId = partnerId;
     }
 
-    public BigDecimal getPartnerIcome() {
-        return partnerIcome;
-    }
-
-    public void setPartnerIcome(BigDecimal partnerIcome) {
-        this.partnerIcome = partnerIcome;
-    }
 
     public int getPartnerStatus() {
         return partnerStatus;
@@ -72,22 +62,6 @@ public class UserPartner extends CommandEntity{
 
     public void setPartnerStatus(int partnerStatus) {
         this.partnerStatus = partnerStatus;
-    }
-
-    public String getButDateTime() {
-        return butDateTime;
-    }
-
-    public void setButDateTime(String butDateTime) {
-        this.butDateTime = butDateTime;
-    }
-
-    public String getSellTime() {
-        return sellTime;
-    }
-
-    public void setSellTime(String sellTime) {
-        this.sellTime = sellTime;
     }
 
 
@@ -115,19 +89,19 @@ public class UserPartner extends CommandEntity{
         this.orderId = orderId;
     }
 
-    public String getBuyPrice() {
+    public BigDecimal getBuyPrice() {
         return buyPrice;
     }
 
-    public void setBuyPrice(String buyPrice) {
+    public void setBuyPrice(BigDecimal buyPrice) {
         this.buyPrice = buyPrice;
     }
 
-    public String getSellPrice() {
+    public BigDecimal getSellPrice() {
         return sellPrice;
     }
 
-    public void setSellPrice(String sellPrice) {
+    public void setSellPrice(BigDecimal sellPrice) {
         this.sellPrice = sellPrice;
     }
 
@@ -137,5 +111,29 @@ public class UserPartner extends CommandEntity{
 
     public void setPartner(Partner partner) {
         this.partner = partner;
+    }
+
+    public BigDecimal getPartnerIncom() {
+        return partnerIncom;
+    }
+
+    public void setPartnerIncom(BigDecimal partnerIncom) {
+        this.partnerIncom = partnerIncom;
+    }
+
+    public String getBuyDatetime() {
+        return buyDatetime;
+    }
+
+    public void setBuyDatetime(String buyDatetime) {
+        this.buyDatetime = buyDatetime;
+    }
+
+    public String getSellDatetime() {
+        return sellDatetime;
+    }
+
+    public void setSellDatetime(String sellDatetime) {
+        this.sellDatetime = sellDatetime;
     }
 }

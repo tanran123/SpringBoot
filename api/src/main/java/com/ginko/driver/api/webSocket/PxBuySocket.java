@@ -38,7 +38,6 @@ public class PxBuySocket {
     private Integer userCode;
 
 
-
     /**
      * 连接建立成功调用的方法
      *
@@ -75,9 +74,9 @@ public class PxBuySocket {
     @OnMessage
     public void onMessage(String message, Session session) {
         JSON json = JSON.parseObject(message);
-        if (userCode==null){
-            String userCode = ((JSONObject) json).getString("userCode");
-            setUserCode(Integer.parseInt(userCode));
+        int userCode_row = ((JSONObject) json).getInteger("userCode");
+        if (userCode == null) {
+            setUserCode(userCode_row);
         }
         System.out.println("客户端发送的消息：" + session.getId());
     }
@@ -94,19 +93,36 @@ public class PxBuySocket {
 
     /**
      * 给特定UserId发送信息
+     *
      * @param message
      * @throws IOException
      */
-    public static void sendByUserId(int userCode,Object message) throws IOException{
+    public static void sendByUserId(int userCode, Object message) throws IOException {
         Arrays.asList(webSocketSet.toArray()).forEach(item -> {
             PxBuySocket PxBuySocket = (PxBuySocket) item;
             try {
-                if (userCode == PxBuySocket.getUserCode()){
-                    String json = JSON.toJSONString(new MsgConfig("0",null,message));
+                if (userCode == PxBuySocket.getUserCode()) {
+                    String json = JSON.toJSONString(new MsgConfig("0", null, message));
                     PxBuySocket.sendMessage(json);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        });
+    }
+
+
+    /**
+     * 给特定UserId发送信息
+     *
+     * @param message
+     * @throws IOException
+     */
+    public void isAleardyExitUserCode(int userCode) throws IOException {
+        Arrays.asList(webSocketSet.toArray()).forEach(item -> {
+            PxBuySocket PxBuySocket = (PxBuySocket) item;
+            if (userCode == PxBuySocket.getUserCode()) {
+                this.onClose();
             }
         });
     }

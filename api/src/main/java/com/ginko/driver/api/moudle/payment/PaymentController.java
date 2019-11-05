@@ -1,10 +1,8 @@
 package com.ginko.driver.api.moudle.payment;
 
 import com.ginko.driver.api.webSocket.CustomerWebSoket;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.ginko.driver.api.webSocket.WebSocketReturnType;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -14,9 +12,9 @@ public class PaymentController {
 
 
     @RequestMapping(value = "/paymentStatus",method = RequestMethod.POST)
-    public void getPayment(@RequestParam("orderCode")String orderCode, @RequestParam("paymentStatus")Boolean paymentStatus){
+    public void getPayment(@RequestBody WebSocketReturnType webSocketReturnType){
         try {
-            CustomerWebSoket.sendByOrderCode(orderCode,paymentStatus);
+            CustomerWebSoket.sendByOrderCode(webSocketReturnType);
         } catch (IOException e) {
             e.printStackTrace();
         }

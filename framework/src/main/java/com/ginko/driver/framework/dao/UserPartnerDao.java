@@ -28,14 +28,6 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
      * 查询用户持有的所有
      * @return
      */
-    @Query(value = "SELECT\n" +
-            "\t* \n" +
-            "FROM\n" +
-            "\tuser_partner u\n" +
-            "\tleft JOIN partner p ON p.partner_id = u.partner_id \n" +
-            "\tAND user_id = partner_user_id \n" +
-            "WHERE\n" +
-            "\tuser_id = ?1",nativeQuery = true)
     List<UserPartner> findByUserId(int userId);
 
 
@@ -55,7 +47,7 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
      */
     @Transactional
     @Modifying
-    @Query(value = "update user_partner  partner_incom = ?2 where id = ?1",nativeQuery = true)
+    @Query(value = "update user_partner SET  partner_incom = ?2 where id = ?1",nativeQuery = true)
     int updatePartnerIncome(int id,BigDecimal income);
 
     /**
@@ -67,12 +59,12 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
      */
     @Transactional
     @Modifying
-    @Query(value = "update user_partner  partner_status = ?2 where id=?1",nativeQuery = true)
+    @Query(value = "update user_partner SET  partner_status = ?2 where id=?1",nativeQuery = true)
     int updatePartnerStatus(int id,int status);
 
 
     @Transactional
     @Modifying
-    @Query(value = "update user_partner  sell_status = ?2 where id=?1",nativeQuery = true)
+    @Query(value = "update user_partner SET  sell_status = ?2 where id=?1",nativeQuery = true)
     int updateSellStatus(int id,int status);
 }

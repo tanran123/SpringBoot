@@ -19,6 +19,9 @@ public class Partner extends CommandEntity{
     private BigDecimal price;
     private int viewCount;
     private int sellStatus;
+    private int lockStatus;
+    private String lockTime;
+    private int lockUserId;
 
     public int getPartnerId() {
         return partnerId;
@@ -74,5 +77,29 @@ public class Partner extends CommandEntity{
 
     public void setSellStatus(int sellStatus) {
         this.sellStatus = sellStatus;
+    }
+
+    public int getLockStatus() {
+        return lockStatus;
+    }
+
+    public void setLockStatus(int lockStatus) {
+        this.lockStatus = lockStatus;
+    }
+
+    public String getLockTime() {
+        return lockTime;
+    }
+
+    public void setLockTime(String lockTime) {
+        this.lockTime = lockTime;
+    }
+
+    public int getLockUserId() {
+        return lockUserId;
+    }
+
+    public void setLockUserId(int lockUserId) {
+        this.lockUserId = lockUserId;
     }
 }

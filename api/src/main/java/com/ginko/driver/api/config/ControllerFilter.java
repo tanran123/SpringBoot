@@ -6,8 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
@@ -17,11 +19,6 @@ import java.io.IOException;
  * @Date Create in 14:32 2019/9/2
  */
 public class ControllerFilter implements Filter {
-
-   /* @Autowired
-    private MongoSysUserDaoImp mongoDBDaoImp;
-*/
-
     Logger logger = LoggerFactory.getLogger(ControllerFilter.class);
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

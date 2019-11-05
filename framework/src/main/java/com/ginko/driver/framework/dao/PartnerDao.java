@@ -25,6 +25,8 @@ public interface PartnerDao extends CrudRepository<Partner, Long> {
      */
     Partner findByPartnerDay(String partnerDay);
 
+    Partner findByPartnerId(int partnerId);
+
     List<Partner> findByPartnerUserId(int userId);
 
 
@@ -39,7 +41,13 @@ public interface PartnerDao extends CrudRepository<Partner, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "update partner  sell_status = ?2, partner_user_id = ?1 where partner_id=?3",nativeQuery = true)
+    @Query(value = "update partner SET  sell_status = ?2, partner_user_id = ?1 where partner_id=?3",nativeQuery = true)
     int updatePartnerSellStatus(int userId, int sellStatus,int id);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "update partner SET  lock_status = ?2, lock_time = ?3,lock_user_id =?4 where partner_id=?1",nativeQuery = true)
+    int updateLockStatusAndLockTimeAndUserId(int partnerId, int lockStatus,String dataTime,int userId);
 
 }

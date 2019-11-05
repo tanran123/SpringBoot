@@ -1,5 +1,7 @@
+/*
 package com.ginko.driver.api.config;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
 
-/*@Configuration
+@SpringBootApplication
 public class FilterConfig implements WebMvcConfigurer {
     @Bean
     public Filter newuserFilter() {
@@ -18,14 +20,13 @@ public class FilterConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean userFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new DelegatingFilterProxy("ControllerFilter"));
-        registration.addUrlPatterns("/*");
-        registration.setName("filter");
-        registration.setOrder(1);
+        registration.setFilter(new ControllerFilter());
+        registration.addUrlPatterns("/partner/*");
         return registration;
     }
 
-   *//* @Bean
+   */
+/* @Bean
     public FilterRegistrationBean pxFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new DelegatingFilterProxy("newpxFilter"));
@@ -34,4 +35,6 @@ public class FilterConfig implements WebMvcConfigurer {
         registration.setOrder(2);
         return registration;
     }*//*
-}*/
+
+}
+*/
