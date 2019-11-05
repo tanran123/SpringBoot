@@ -3,6 +3,8 @@ package com.ginko.driver.api.webSocket;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ginko.driver.common.entity.MsgConfig;
+import org.apache.commons.lang.StringUtils;
+import org.mockito.internal.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -13,10 +15,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @Author: tran
- * @Description:
+ * @Description:支付时连接的websocket
  * @Date Create in 15:13 2019/8/17
  */
-@ServerEndpoint(value = "/customer/websocket")
+@ServerEndpoint(value = "/payment/pay")
 @Component
 public class CustomerWebSoket {
     /**
@@ -35,6 +37,8 @@ public class CustomerWebSoket {
     private String code;
 
     private int userId;
+
+    private String orderCode;
 
 
 
@@ -74,14 +78,9 @@ public class CustomerWebSoket {
     @OnMessage
     public void onMessage(String message, Session session) {
         JSON json = JSON.parseObject(message);
-        String userId = ((JSONObject) json).getString("userId");
-        setUserId(Integer.parseInt(userId));
-        System.out.println("客户端发送的消息：" + session.getId());
-        try {
-            sendByUserId(1,message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String orderCode = ((JSONObject) json).getString("orderCode");
+        setOrderCode(orderCode);
+        System.out.println("发起交易，订单号为：" + orderCode);
     }
 
     /**
@@ -95,16 +94,16 @@ public class CustomerWebSoket {
     }
 
     /**
-     * 给UserId发送信息
+     * 给code发送信息
      * @param message
      * @throws IOException
      */
-    public static void sendByUserId(int userId,String message) throws IOException{
+    public static void sendByOrderCode(String OrderCode,Boolean message) throws IOException{
         Arrays.asList(webSocketSet.toArray()).forEach(item -> {
             CustomerWebSoket customWebSocket = (CustomerWebSoket) item;
             //群发
             try {
-                if (userId == customWebSocket.getUserId()){
+                if (StringUtils.equals(OrderCode,customWebSocket.getOrderCode())){
                     String json = JSON.toJSONString(new MsgConfig("0",null,message));
                     customWebSocket.sendMessage(json);
                 }
@@ -192,5 +191,13 @@ public class CustomerWebSoket {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
     }
 }
