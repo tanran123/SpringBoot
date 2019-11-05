@@ -1,4 +1,3 @@
-/*
 package com.ginko.driver.api.config;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,8 +24,7 @@ public class FilterConfig implements WebMvcConfigurer {
         return registration;
     }
 
-   */
-/* @Bean
+ /*@Bean
     public FilterRegistrationBean pxFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new DelegatingFilterProxy("newpxFilter"));
@@ -34,7 +32,6 @@ public class FilterConfig implements WebMvcConfigurer {
         registration.setName("newpxFilter");
         registration.setOrder(2);
         return registration;
-    }*//*
-
-}
+    }
 */
+}

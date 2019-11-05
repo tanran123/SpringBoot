@@ -1,6 +1,8 @@
 package com.ginko.driver.framework.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -19,8 +21,11 @@ public class Partner extends CommandEntity{
     private BigDecimal price;
     private int viewCount;
     private int sellStatus;
+    @JsonIgnore
     private int lockStatus;
+    @JsonIgnore
     private String lockTime;
+    @JsonIgnore
     private int lockUserId;
 
     public int getPartnerId() {

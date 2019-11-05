@@ -1,6 +1,7 @@
 package com.ginko.driver.framework.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -25,6 +26,8 @@ public class UserPartner extends CommandEntity{
     private BigDecimal buyPrice;
 
     private BigDecimal sellPrice;
+
+    private int sellUserId;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="partnerId",insertable = false,updatable = false)
@@ -135,5 +138,13 @@ public class UserPartner extends CommandEntity{
 
     public void setSellDatetime(String sellDatetime) {
         this.sellDatetime = sellDatetime;
+    }
+
+    public int getSellUserId() {
+        return sellUserId;
+    }
+
+    public void setSellUserId(int sellUserId) {
+        this.sellUserId = sellUserId;
     }
 }

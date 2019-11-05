@@ -24,6 +24,9 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
     Page<UserPartner> findByUserId(int userId, Pageable pageable);
 
 
+    UserPartner findByPartnerIdAndUserIdAndPaymentStatus(int partnerId,int userId,int paymentStatus);
+
+    UserPartner findByOrderId(String orderId);
     /**
      * 查询用户持有的所有
      * @return
@@ -67,4 +70,17 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
     @Modifying
     @Query(value = "update user_partner SET  sell_status = ?2 where id=?1",nativeQuery = true)
     int updateSellStatus(int id,int status);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "update user_partner SET  partner_status = 1,sell_datetime=?3 where partner_id=?1 and user_id=?2 and partner_status = 0",nativeQuery = true)
+    int updateUserPartnerOwn(int partnerId,int sellUserId,String dateTime);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update user_partner SET  partner_status = 0,payment_status=1 where order_id=?1",nativeQuery = true)
+    int updateUserPartnerOwnForOderId(String orderId);
+
+
 }

@@ -4,9 +4,11 @@ package com.ginko.driver.framework.service;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.util.DateTool;
 import com.ginko.driver.framework.dao.PartnerDao;
+import com.ginko.driver.framework.dao.UserIncomDao;
 import com.ginko.driver.framework.dao.UserPartnerDao;
 import com.ginko.driver.framework.entity.OrderInfo;
 import com.ginko.driver.framework.entity.Partner;
+import com.ginko.driver.framework.entity.UserIncom;
 import com.ginko.driver.framework.entity.UserPartner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,9 @@ public class PartnerService {
 
     @Autowired
     private UserPartnerDao userPartnerDao;
+
+    @Autowired
+    private UserIncomDao userIncomDao;
 
 
     public Partner addPartner(Partner partner) {
@@ -96,25 +101,28 @@ public class PartnerService {
         //不出售
         if (partnerQuery.getSellStatus() == 0) {
             return new MsgConfig("108", "当前合伙人暂不出售", null);
-        }
-        else {
+        } else {
             /*判断合伙人是否被锁定*/
             if (partnerQuery.getLockStatus() == 1) { //已锁定
                 //看锁定是否超过3分钟
                 if (DateTool.diffTimeMin(partnerQuery.getLockTime()) >= 3) {
-                    return new MsgConfig("0",null,addPartnerOrder(userPartner));
+                    return new MsgConfig("0", null, addPartnerOrder(userPartner));
                 }
                 //锁定没有超过3分钟
                 else {
-                    if (userPartner.getUserId()==partnerQuery.getLockUserId()){
-
+                    //如果还是这个用户
+                    if (userPartner.getUserId() == partnerQuery.getLockUserId()) {
+                        UserPartner alreadyUp = userPartnerDao.findByPartnerIdAndUserIdAndPaymentStatus(
+                                userPartner.getPartnerId(), userPartner.getUserId(), 0);
+                        return new MsgConfig("0", null, alreadyUp);
+                    } else {
+                        return new MsgConfig("109", "当前合伙人已被锁定，3分钟后若用户未支付，您还有机会", null);
                     }
-                    return new MsgConfig("109", "当前合伙人已被锁定，3分钟后若用户未支付，您还有机会", null);
                 }
             }
             //未被锁定
             else {
-                return new MsgConfig("0",null,addPartnerOrder(userPartner));
+                return new MsgConfig("0", null, addPartnerOrder(userPartner));
             }
         }
     }
@@ -128,6 +136,7 @@ public class PartnerService {
         id = id.replace("-", "");//替换掉中间的那个横杠
         userPartner.setOrderId(id);
         userPartner.setBuyDatetime(getNowDateTime());
+        userPartner.setPartnerStatus(2);
         userPartner.setPaymentStatus(0);
         userPartner.setSellPrice(userPartner.getBuyPrice());
         userPartner.setPartnerIncom(new BigDecimal("0"));
@@ -135,4 +144,41 @@ public class PartnerService {
         return userPartnerDao.save(userPartner);
     }
 
+    /**
+     * 合伙人资格成功回调
+     *
+     * @param orderId
+     * @param type
+     * @return
+     */
+    @Transactional
+    public void successPayMnet(String orderId, boolean type) {
+        if (type) {
+            UserPartner userPartner = userPartnerDao.findByOrderId(orderId);
+            Partner partner = partnerDao.findByPartnerId(userPartner.getPartnerId());
+            //更新partner表所属
+            partnerDao.updatePartnerSellStatus(userPartner.getUserId(), 0, userPartner.getPartnerId(),userPartner.getBuyPrice());
+            //更新用户合伙人表中，将以前的用户拥有合伙人状态置为已经出售
+            userPartnerDao.updateUserPartnerOwn(userPartner.getPartnerId(),userPartner.getSellUserId(),getNowDateTime());
+            //更新支付及持有状态
+            userPartnerDao.updateUserPartnerOwnForOderId(orderId);
+            //0：收入 1：支出
+            UserIncom userIncom = new UserIncom();
+            userIncom.setUserId(partner.getPartnerUserId());
+            userIncom.setDescription(0);
+            userIncom.setMoney(userPartner.getBuyPrice());
+            userIncom.setTime(getNowDateTime());
+            userIncom.setType(0);
+            userIncom.setOrderCode(userPartner.getOrderId());
+            userIncomDao.save(userIncom);
+            UserIncom userIncom1 = new UserIncom();
+            userIncom1.setDescription(0);
+            userIncom1.setMoney(userPartner.getBuyPrice());
+            userIncom1.setTime(getNowDateTime());
+            userIncom1.setOrderCode(userPartner.getOrderId());
+            userIncom1.setType(1);
+            userIncom1.setUserId(userPartner.getUserId());
+            userIncomDao.save(userIncom1);
+        }
+    }
 }
