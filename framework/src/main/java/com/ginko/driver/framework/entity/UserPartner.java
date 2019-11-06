@@ -31,7 +31,6 @@ public class UserPartner extends CommandEntity{
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="partnerId",insertable = false,updatable = false)
-    @Where(clause = "userId=partnerUserId")
     private Partner partner;
 
     public int getId() {

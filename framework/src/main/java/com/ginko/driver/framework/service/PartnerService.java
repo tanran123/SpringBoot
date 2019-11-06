@@ -51,10 +51,29 @@ public class PartnerService {
         return partnerDao.findByPartnerDay(day);
     }
 
-    public Page<Partner> findByPartnerUserId(UserPartner userPartner) {
-        return partnerDao.findByPartnerUserId(userPartner.getUserId(), PageRequest.of(userPartner.getPage() - 1, userPartner.getSize()));
+    /**
+     * 通过用户ID查找合伙人资格
+     * @param userPartner
+     * @return
+     */
+    public Page<UserPartner> findByPartnerUserId(Partner partner) {
+        return userPartnerDao.findByUserIdAndPartnerStatus(partner.getPartnerUserId(),0, PageRequest.of(partner.getPage() - 1, partner.getSize()));
     }
 
+
+    /**
+     * 查找出售中的合伙人
+     * @param userId
+     * @return
+     */
+    public Page<Partner> findBySellStatus(Partner partner) {
+        return partnerDao.findBySellStatus(1, PageRequest.of(partner.getPage() - 1, partner.getSize()));
+    }
+    /**
+     * 查找今日合伙人资格
+     * @param userId
+     * @return
+     */
     public List<Partner> findByPartnerUserId(int userId) {
         return partnerDao.findByPartnerUserId(userId);
     }

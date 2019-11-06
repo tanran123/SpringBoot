@@ -234,4 +234,24 @@ public class PartnerController {
         userPartner.setBuyPrice(partnerData.getPriceData().get(partnerData.getPriceData().size()-1));
         return partnerService.buyPartner(userPartner);
     }
+
+    /**
+     * 出售的信息
+     * @param partner
+     * @return
+     */
+    @RequestMapping("/getSellPartner")
+    public MsgConfig getSellPartner(@RequestBody Partner partner){
+        return new MsgConfig("0",null,partnerService.findBySellStatus(partner));
+    }
+
+    /**
+     * 用户拥有的合伙人信息
+     * @param partner
+     * @return
+     */
+    @RequestMapping("/getUsersPartner")
+    public MsgConfig getUsersPartner(@RequestBody Partner partner){
+        return new MsgConfig("0",null,partnerService.findByPartnerUserId(partner));
+    }
 }

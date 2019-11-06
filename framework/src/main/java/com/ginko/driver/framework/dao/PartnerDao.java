@@ -25,12 +25,35 @@ public interface PartnerDao extends CrudRepository<Partner, Long> {
      */
     Partner findByPartnerDay(String partnerDay);
 
+    /**
+     * 通过主键查询
+     * @param partnerId
+     * @return
+     */
     Partner findByPartnerId(int partnerId);
 
+    /**
+     * 查询用户全拥有的全部partner
+     * @param userId
+     * @return
+     */
     List<Partner> findByPartnerUserId(int userId);
 
 
+    /**
+     * 用过USERID分页查询
+     * @param userId
+     * @param pageable
+     * @return
+     */
     Page<Partner> findByPartnerUserId(int userId,Pageable pageable);
+
+    /**
+     * 通过isSellStatus分页查询
+     * @param sellStatus
+     * @return
+     */
+    Page<Partner> findBySellStatus(int sellStatus,Pageable pageable);
 
 
     @Transactional
