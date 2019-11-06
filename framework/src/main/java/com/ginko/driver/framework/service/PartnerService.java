@@ -51,9 +51,17 @@ public class PartnerService {
         return partnerDao.findByPartnerDay(day);
     }
 
+    public Partner findByPartnerId(int partnerId){
+        return partnerDao.findByPartnerId(partnerId);
+    }
+
+    public int updatePartnerPrice(int userId,BigDecimal price,String partnerDay){
+        return partnerDao.updatePartnerPrice(userId,price,partnerDay);
+    }
+
     /**
      * 通过用户ID查找合伙人资格
-     * @param userPartner
+     * @param
      * @return
      */
     public Page<UserPartner> findByPartnerUserId(Partner partner) {
@@ -63,7 +71,7 @@ public class PartnerService {
 
     /**
      * 查找出售中的合伙人
-     * @param userId
+     * @param
      * @return
      */
     public Page<Partner> findBySellStatus(Partner partner) {

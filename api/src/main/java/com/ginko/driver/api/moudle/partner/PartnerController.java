@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Part;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -47,7 +48,15 @@ public class PartnerController {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
-        currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
+        Partner partner = partnerService.findByPartnerDay(getNowDate(0));
+        //查看今日partner是否已经出售
+        if (partner.getPartnerUserId()==0){ //未出售
+            currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
+            partnerService.updatePartnerPrice(0,currentPrice,getNowDate(0));
+        }
+        else{ //已出售
+            currentPrice = partner.getPrice();
+        }
         String nowHour = hour < 10 ? "0" + hour : String.valueOf(hour);
         String nowMin = min < 10 ? "0" + min : String.valueOf(min);
         partnerData.getDataTime().add(nowHour + ":" + nowMin);
@@ -231,7 +240,8 @@ public class PartnerController {
 
     @RequestMapping("/buyPartner")
     public MsgConfig buyPartner(@RequestBody UserPartner userPartner) {
-        userPartner.setBuyPrice(partnerData.getPriceData().get(partnerData.getPriceData().size()-1));
+        Partner partner = partnerService.findByPartnerId(userPartner.getPartnerId());
+        userPartner.setBuyPrice(partner.getPrice());
         return partnerService.buyPartner(userPartner);
     }
 
