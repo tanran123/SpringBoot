@@ -3,8 +3,12 @@ package com.ginko.driver.api.webSocket;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ginko.driver.common.entity.MsgConfig;
+import com.ginko.driver.framework.entity.UserPartner;
+import com.ginko.driver.framework.service.PartnerService;
 import org.apache.commons.lang.StringUtils;
 import org.mockito.internal.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -20,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @ServerEndpoint(value = "/payment/pay")
 @Component
-public class CustomerWebSoket {
+public class CustomerWebSoket  {
     /**
      * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
      */
@@ -32,6 +36,9 @@ public class CustomerWebSoket {
     /**
      * 与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
+
+    public static PartnerService partnerService;
+
     private Session session;
 
     private String code;
@@ -43,6 +50,8 @@ public class CustomerWebSoket {
     private int partnerId;
 
     private String socketId;
+
+
 
 
 
@@ -83,8 +92,21 @@ public class CustomerWebSoket {
     public void onMessage(String message, Session session) {
         JSON json = JSON.parseObject(message);
         String orderCode = ((JSONObject) json).getString("orderCode");
-        setOrderCode(orderCode);
-        System.out.println("发起交易，订单号为：" + orderCode);
+        if (getOrderCode()==null||getOrderCode().equals("")){
+            setOrderCode(orderCode);
+        }
+        String payType = ((JSONObject) json).getString("payType");
+        if (StringUtils.equals("cancel",payType)){
+            System.out.println("交易取消，订单号为：" + orderCode);
+
+            UserPartner userPartner = partnerService.findByOrderCode(orderCode);
+            partnerService.clearLockAndCancelOrder(userPartner);
+
+        }
+        else{
+            System.out.println("发起交易，订单号为：" + orderCode);
+        }
+
     }
 
     /**
@@ -134,7 +156,6 @@ public class CustomerWebSoket {
                 if (StringUtils.equals(webSocketReturnType.getOrderCode(),customWebSocket.getOrderCode())){
                     String json = JSON.toJSONString(new MsgConfig("0",null,webSocketReturnType));
                     customWebSocket.sendMessage(json);
-                    break;
                 }
             } catch (IOException e) {
                 e.printStackTrace();

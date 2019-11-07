@@ -10,7 +10,9 @@ import com.ginko.driver.framework.entity.OrderInfo;
 import com.ginko.driver.framework.entity.Partner;
 import com.ginko.driver.framework.entity.UserIncom;
 import com.ginko.driver.framework.entity.UserPartner;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -57,6 +59,21 @@ public class PartnerService {
 
     public int updatePartnerPrice(int userId,BigDecimal price,String partnerDay){
         return partnerDao.updatePartnerPrice(userId,price,partnerDay);
+    }
+
+    public UserPartner findByOrderCode(String orderCode){
+        return userPartnerDao.findByOrderId(orderCode);
+    }
+
+
+    /**
+     * 清除锁定，取消订单
+     * @param userPartner
+     */
+    @Transactional
+    public void clearLockAndCancelOrder(UserPartner userPartner){
+        userPartnerDao.updatePaymentStatusForOrderId(userPartner.getOrderId(),2);
+        partnerDao.updateLockStatusAndLockTimeAndUserId(userPartner.getPartnerId(),0,"",-5);
     }
 
     /**

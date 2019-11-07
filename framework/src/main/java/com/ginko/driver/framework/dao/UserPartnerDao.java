@@ -88,5 +88,8 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
     @Query(value = "update user_partner SET  partner_status = 0,payment_status=1 where order_id=?1",nativeQuery = true)
     int updateUserPartnerOwnForOderId(String orderId);
 
-
+    @Transactional
+    @Modifying
+    @Query(value = "update user_partner SET  payment_status=?2 where order_id=?1",nativeQuery = true)
+    int updatePaymentStatusForOrderId(String orderId,int paymentStatus);
 }

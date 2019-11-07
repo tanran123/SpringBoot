@@ -92,11 +92,11 @@ public class PartnerController {
     @RequestMapping(value = "/getAllPrice")
     public MsgConfig getAllPrice() {
         //如果今日合伙人为空
+        partnerData.view();
+        addPrice();
         if (partnerService.findByPartnerDay(getNowDate(0)) == null) {
             addPartner(0);
         }
-        partnerData.view();
-        addPrice();
         return new MsgConfig("0", null, partnerData);
     }
 
@@ -196,6 +196,7 @@ public class PartnerController {
         partner.setPartnerNation("");
         partner.setPartnerUserId(0);
         partner.setSellStatus(1);
+        partner.setPrice(currentPrice);
         return partnerService.addPartner(partner);
     }
 
