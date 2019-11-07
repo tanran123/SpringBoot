@@ -68,10 +68,11 @@ public class PartnerController {
      */
     @Scheduled(cron = "0 59 23 * * ?")
     public void updateTody() {
+        Partner partner = partnerService.findByPartnerDay(getNowDate(0));
         //判断今日合伙人是否已出售
-        if (partnerService.findByPartnerDay(getNowDate(0)).getSellStatus() == 0) {
-            //将合伙人划分到平台账户
-            addUserPartner();
+        if (partner.getPartnerUserId() == 0) {
+            //没出售将合伙人划分到平台账户
+            addUserPartner(partner);
         }
         //添加明日合伙人记录
         addPartner(1);
@@ -196,19 +197,22 @@ public class PartnerController {
         partner.setPartnerNation("");
         partner.setPartnerUserId(0);
         partner.setSellStatus(1);
-        partner.setPrice(currentPrice);
+        partner.setPrice(new BigDecimal("1000"));
         return partnerService.addPartner(partner);
     }
 
-    public UserPartner addUserPartner() {
+    public UserPartner addUserPartner(Partner partner) {
         //生成UUID给partner当唯一标识
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString();
-        id = id.replace("-", "");//替换掉中间的那个横杠
         UserPartner userPartner = new UserPartner();
+        userPartner.setOrderId(id);
         userPartner.setPartnerDay(getNowDate(0));
+        userPartner.setPartnerId(partner.getPartnerId());
         userPartner.setPartnerStatus(0);
         userPartner.setUserId(0);
+        userPartner.setPaymentStatus(1);
+        partnerService.updatePartnerSellStatusAndPrice(0,partner.getPrice(),partner.getPartnerId());
         return userPartnerService.addUserPartner(userPartner);
     }
 
@@ -264,5 +268,12 @@ public class PartnerController {
     @RequestMapping("/getUsersPartner")
     public MsgConfig getUsersPartner(@RequestBody Partner partner){
         return new MsgConfig("0",null,partnerService.findByPartnerUserId(partner));
+    }
+
+
+    @RequestMapping("/updatePartnerSellStatus")
+    public MsgConfig updatePartnerSellStatus(@RequestBody Partner partner){
+        return new MsgConfig("0",null,
+                partnerService.updatePartnerSellStatusAndPrice(partner.getSellStatus(),partner.getPrice(),partner.getPartnerId()));
     }
 }

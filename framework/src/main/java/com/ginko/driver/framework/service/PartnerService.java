@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Part;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -186,6 +187,10 @@ public class PartnerService {
         userPartner.setPartnerIncom(new BigDecimal("0"));
         partnerDao.updateLockStatusAndLockTimeAndUserId(userPartner.getPartnerId(), 1, getNowDateTime(), userPartner.getUserId());
         return userPartnerDao.save(userPartner);
+    }
+
+    public int updatePartnerSellStatusAndPrice(int sellStatus,BigDecimal price,int partnerId){
+        return partnerDao.updatePartnerSellStatusAndPrice(sellStatus,partnerId,price);
     }
 
     /**
