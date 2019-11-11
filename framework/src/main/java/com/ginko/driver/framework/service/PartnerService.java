@@ -82,8 +82,8 @@ public class PartnerService {
      * @param
      * @return
      */
-    public Page<UserPartner> findByPartnerUserId(Partner partner) {
-        return userPartnerDao.findByUserIdAndPartnerStatus(partner.getPartnerUserId(),0, PageRequest.of(partner.getPage() - 1, partner.getSize()));
+    public Page<UserPartner> findByPartnerUserId(UserPartner partner) {
+        return userPartnerDao.findByUserIdAndPartnerStatusAndPaymentStatus(partner.getUserId(),partner.getPartnerStatus(),partner.getPaymentStatus(),PageRequest.of(partner.getPage() - 1, partner.getSize()));
     }
 
 

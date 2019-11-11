@@ -266,7 +266,7 @@ public class PartnerController {
      * @return
      */
     @RequestMapping("/getUsersPartner")
-    public MsgConfig getUsersPartner(@RequestBody Partner partner){
+    public MsgConfig getUsersPartner(@RequestBody UserPartner partner){
         return new MsgConfig("0",null,partnerService.findByPartnerUserId(partner));
     }
 

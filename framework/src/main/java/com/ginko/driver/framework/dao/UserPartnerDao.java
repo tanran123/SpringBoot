@@ -28,7 +28,7 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
      * 查询用户的所有信息
      * @return
      */
-    Page<UserPartner> findByUserIdAndPartnerStatus(int userId,int partnerStatus,Pageable pageable);
+    Page<UserPartner> findByUserIdAndPartnerStatusAndPaymentStatus(int userId,int partnerStatus,int payment,Pageable pageable);
 
     UserPartner findByPartnerIdAndUserIdAndPaymentStatus(int partnerId,int userId,int paymentStatus);
 
