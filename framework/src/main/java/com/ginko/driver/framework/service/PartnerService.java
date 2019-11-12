@@ -230,4 +230,9 @@ public class PartnerService {
             userIncomDao.save(userIncom1);
         }
     }
+
+
+    public int updatePartnerViewCount(String partnerDay){
+        return partnerDao.updatePartnerViewCount(partnerDay);
+    }
 }

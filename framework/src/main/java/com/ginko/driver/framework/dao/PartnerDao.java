@@ -78,4 +78,10 @@ public interface PartnerDao extends CrudRepository<Partner, Long> {
     @Query(value = "update partner SET  lock_status = ?2, lock_time = ?3,lock_user_id =?4 where partner_id=?1",nativeQuery = true)
     int updateLockStatusAndLockTimeAndUserId(int partnerId, int lockStatus,String dataTime,int userId);
 
+
+    @Transactional
+    @Modifying
+    @Query(value = "update partner SET  view_count=view_count+1 where partner_day=?1",nativeQuery = true)
+    int updatePartnerViewCount(String partnerDay);
+
 }

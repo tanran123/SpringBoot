@@ -110,6 +110,7 @@ public class PartnerController {
     public MsgConfig getTodayPartner() {
         //如果今日合伙人为空
         Partner partner = partnerService.findByPartnerDay(getNowDate(0));
+        partnerService.updatePartnerViewCount(getNowDate(0));
         return new MsgConfig("0", null, partner);
     }
 
