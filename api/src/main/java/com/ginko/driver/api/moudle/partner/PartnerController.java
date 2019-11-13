@@ -1,5 +1,6 @@
 package com.ginko.driver.api.moudle.partner;
 
+import com.ginko.driver.api.httpClient.HttpClientUtil;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.framework.entity.Partner;
 import com.ginko.driver.framework.entity.UserPartner;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Part;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,7 +33,7 @@ public class PartnerController {
     private static PartnerData partnerData = new PartnerData();
     private static BigDecimal price = new BigDecimal("1000.00");
     private static BigDecimal currentPrice = new BigDecimal("1000.00");
-
+    private static BigDecimal bsvCurrentPrice = new BigDecimal("0.00000001");
 
     @Autowired
     private PartnerService partnerService;
@@ -45,6 +47,7 @@ public class PartnerController {
      */
     @Scheduled(cron = "0 0/5 * * * ?")
     public void getPartnerPrice() {
+        BigDecimal cny = HttpClientUtil.getCny();
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
@@ -52,15 +55,19 @@ public class PartnerController {
         //查看今日partner是否已经出售
         if (partner.getPartnerUserId()==0){ //未出售
             currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
-            partnerService.updatePartnerPrice(0,currentPrice,getNowDate(0));
+            bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
+            partnerService.updatePartnerPrice(0,currentPrice,getNowDate(0),bsvCurrentPrice);
         }
         else{ //已出售
             currentPrice = partner.getPrice();
+            bsvCurrentPrice = partner.getBsvPrice();
+
         }
         String nowHour = hour < 10 ? "0" + hour : String.valueOf(hour);
         String nowMin = min < 10 ? "0" + min : String.valueOf(min);
-        partnerData.getDataTime().add(nowHour + ":" + nowMin);
-        partnerData.getPriceData().add(currentPrice);
+        partnerData.getDataTime().add(nowHour + ":" + nowMin); //设置当前时间
+        partnerData.getPriceData().add(currentPrice);       //写入当前现金价格
+        partnerData.getBsvPriceData().add(bsvCurrentPrice);    //写入当前BSV价格
     }
 
     /**
@@ -126,6 +133,8 @@ public class PartnerController {
     }
 
     public static void addPrice() {
+        //获取BSV价格
+        BigDecimal cny = HttpClientUtil.getCny();
         if (partnerData.getPriceData().size() == 0) {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -138,8 +147,12 @@ public class PartnerController {
                 stringBufferHour.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
                 for (int j = 0; j < 12; j++) {
                     stringBuffer.setLength(0);
+                    //放入现金价格
                     currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
                     partnerData.getPriceData().add(currentPrice);
+                    //放入BSV价格
+                    bsvCurrentPrice = currentPrice.divide(cny,8, RoundingMode.HALF_UP);
+                    partnerData.getBsvPriceData().add(bsvCurrentPrice);
                     int oldMin = j * 5;
                     stringBuffer.append(oldMin < 10 ? "0" + String.valueOf(oldMin) : String.valueOf(oldMin));
                     partnerData.getDataTime().add(stringBufferHour + ":" + stringBuffer);
@@ -149,8 +162,12 @@ public class PartnerController {
             StringBuffer stringBufferMin = new StringBuffer("");
             for (int i = 0; i <= min; i += 5) {
                 stringBufferMin.setLength(0);
+                //放入现金价格
                 currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
                 partnerData.getPriceData().add(currentPrice);
+                //放入BSV价格
+                bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
+                partnerData.getBsvPriceData().add(bsvCurrentPrice);
                 stringBufferMin.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
                 partnerData.getDataTime().add(hour + ":" + stringBufferMin);
             }
@@ -193,12 +210,15 @@ public class PartnerController {
     }*/
 
     public Partner addPartner(int add) {
+        //获取BSV价格
+        BigDecimal cny = HttpClientUtil.getCny();
         Partner partner = new Partner();
         partner.setPartnerDay(getNowDate(add));
         partner.setPartnerNation("");
         partner.setPartnerUserId(0);
         partner.setSellStatus(1);
         partner.setPrice(new BigDecimal("1000"));
+        partner.setBsvPrice(new BigDecimal("1000").divide(cny,7,RoundingMode.HALF_UP));
         return partnerService.addPartner(partner);
     }
 

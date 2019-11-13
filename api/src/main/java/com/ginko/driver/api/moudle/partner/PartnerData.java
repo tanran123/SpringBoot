@@ -15,6 +15,7 @@ import java.util.List;
 public class PartnerData {
     private  List<String> dataTime = new ArrayList<>();
     private  List<BigDecimal> priceData = new ArrayList<>();
+    private  List<BigDecimal> bsvPriceData = new ArrayList<>();
     private int viewCount =0;
     private Partner partner=null;
 
@@ -48,5 +49,13 @@ public class PartnerData {
 
     public void setPartner(Partner partner) {
         this.partner = partner;
+    }
+
+    public List<BigDecimal> getBsvPriceData() {
+        return bsvPriceData;
+    }
+
+    public void setBsvPriceData(List<BigDecimal> bsvPriceData) {
+        this.bsvPriceData = bsvPriceData;
     }
 }

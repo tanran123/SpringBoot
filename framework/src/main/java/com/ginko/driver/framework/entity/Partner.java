@@ -24,6 +24,7 @@ public class Partner extends CommandEntity{
     private int lockStatus;
     private String lockTime;
     private int lockUserId;
+    private BigDecimal bsvPrice;
 
     public int getPartnerId() {
         return partnerId;
@@ -103,5 +104,13 @@ public class Partner extends CommandEntity{
 
     public void setLockUserId(int lockUserId) {
         this.lockUserId = lockUserId;
+    }
+
+    public BigDecimal getBsvPrice() {
+        return bsvPrice;
+    }
+
+    public void setBsvPrice(BigDecimal bsvPrice) {
+        this.bsvPrice = bsvPrice;
     }
 }

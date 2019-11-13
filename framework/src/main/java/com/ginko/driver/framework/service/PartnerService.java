@@ -58,8 +58,8 @@ public class PartnerService {
         return partnerDao.findByPartnerId(partnerId);
     }
 
-    public int updatePartnerPrice(int userId,BigDecimal price,String partnerDay){
-        return partnerDao.updatePartnerPrice(userId,price,partnerDay);
+    public int updatePartnerPrice(int userId,BigDecimal price,String partnerDay,BigDecimal bsvPrice){
+        return partnerDao.updatePartnerPrice(userId,price,partnerDay,bsvPrice);
     }
 
     public UserPartner findByOrderCode(String orderCode){

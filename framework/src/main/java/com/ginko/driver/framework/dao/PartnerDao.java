@@ -58,8 +58,8 @@ public interface PartnerDao extends CrudRepository<Partner, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "update partner SET  price = ?2 where partner_day=?3 and partner_user_id = ?1",nativeQuery = true)
-    int updatePartnerPrice(int userId, BigDecimal price,String partnerDay);
+    @Query(value = "update partner SET  price = ?2,bsv_price = ?4  where partner_day=?3 and partner_user_id = ?1",nativeQuery = true)
+    int updatePartnerPrice(int userId, BigDecimal price,String partnerDay,BigDecimal bsvPrice);
 
 
     @Transactional
