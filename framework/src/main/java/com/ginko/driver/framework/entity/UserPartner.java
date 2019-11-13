@@ -29,6 +29,12 @@ public class UserPartner extends CommandEntity{
 
     private int sellUserId;
 
+
+    private BigDecimal buyBsvPrice;
+
+
+    private BigDecimal sellBsvPrice;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="partnerId",insertable = false,updatable = false)
     private Partner partner;
@@ -145,5 +151,22 @@ public class UserPartner extends CommandEntity{
 
     public void setSellUserId(int sellUserId) {
         this.sellUserId = sellUserId;
+    }
+
+
+    public BigDecimal getBuyBsvPrice() {
+        return buyBsvPrice;
+    }
+
+    public void setBuyBsvPrice(BigDecimal buyBsvPrice) {
+        this.buyBsvPrice = buyBsvPrice;
+    }
+
+    public BigDecimal getSellBsvPrice() {
+        return sellBsvPrice;
+    }
+
+    public void setSellBsvPrice(BigDecimal sellBsvPrice) {
+        this.sellBsvPrice = sellBsvPrice;
     }
 }

@@ -3,6 +3,7 @@ package com.ginko.driver.framework.service;
 
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.util.DateTool;
+import com.ginko.driver.common.util.Md5Util;
 import com.ginko.driver.framework.dao.PartnerDao;
 import com.ginko.driver.framework.dao.UserIncomDao;
 import com.ginko.driver.framework.dao.UserPartnerDao;
@@ -178,7 +179,7 @@ public class PartnerService {
         //生成UUID给partner当唯一标识
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString();
-        id = id.replace("-", "");//替换掉中间的那个横杠
+        id = Md5Util.getMD5(id);
         userPartner.setOrderId(id);
         userPartner.setBuyDatetime(getNowDateTime());
         userPartner.setPartnerStatus(2);

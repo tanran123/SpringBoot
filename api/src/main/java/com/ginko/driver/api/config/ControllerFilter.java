@@ -35,7 +35,7 @@ public class ControllerFilter implements Filter {
         RequestWrapper requestWrapper = new RequestWrapper(httpServletRequest);
         String body = requestWrapper.getBody();
         logger.info(body);
-        String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("Authorization");// 从 http 请求头中取出 token
         /**
          * 设置token，避开WEBSOCKET
          */

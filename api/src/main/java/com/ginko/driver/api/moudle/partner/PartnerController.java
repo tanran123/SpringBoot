@@ -1,6 +1,7 @@
 package com.ginko.driver.api.moudle.partner;
 
 import com.ginko.driver.api.httpClient.HttpClientUtil;
+import com.ginko.driver.api.md5.Md5Util;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.framework.entity.Partner;
 import com.ginko.driver.framework.entity.UserPartner;
@@ -226,6 +227,7 @@ public class PartnerController {
         //生成UUID给partner当唯一标识
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString();
+        id = Md5Util.getMD5(id);
         UserPartner userPartner = new UserPartner();
         userPartner.setOrderId(id);
         userPartner.setPartnerDay(getNowDate(0));
