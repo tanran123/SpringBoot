@@ -23,7 +23,10 @@ public class PaymentController {
      */
     @RequestMapping(value = "/paymentStatus",method = RequestMethod.POST)
     public MsgConfig getPayment(@RequestBody WebSocketReturnType webSocketReturnType){
-        partnerService.successPayMnet(webSocketReturnType.getOrderCode(),webSocketReturnType.isPaymentStatus());
+        //partner付款的回调逻辑
+        if ("partner".equals(webSocketReturnType.getPaymentType())){
+            partnerService.successPayMnet(webSocketReturnType.getOrderCode(),webSocketReturnType.isPaymentStatus());
+        }
         try {
             CustomerWebSoket.sendByOrderCode(webSocketReturnType);
         } catch (IOException e) {

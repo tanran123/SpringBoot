@@ -10,6 +10,8 @@ public class WebSocketReturnType {
 
     private boolean paymentStatus;
 
+    private String paymentType;
+
 
     public String getOrderCode() {
         return orderCode;
@@ -25,5 +27,13 @@ public class WebSocketReturnType {
 
     public void setPaymentStatus(boolean paymentStatus) {
         this.paymentStatus = paymentStatus;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
     }
 }
