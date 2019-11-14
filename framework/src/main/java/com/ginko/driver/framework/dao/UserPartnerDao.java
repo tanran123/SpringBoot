@@ -72,24 +72,61 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
     int updatePartnerStatus(int id,int status);
 
 
+    /**
+     *
+     * @param id
+     * @param status
+     * @return
+     */
     @Transactional
     @Modifying
     @Query(value = "update user_partner SET  sell_status = ?2 where id=?1",nativeQuery = true)
     int updateSellStatus(int id,int status);
 
 
+    /**
+     * 更新合伙人状态以及出售时间
+     * @param partnerId
+     * @param sellUserId
+     * @param dateTime
+     * @return
+     */
     @Transactional
     @Modifying
     @Query(value = "update user_partner SET  partner_status = 1,sell_datetime=?3 where partner_id=?1 and user_id=?2 and partner_status = 0",nativeQuery = true)
     int updateUserPartnerOwn(int partnerId,int sellUserId,String dateTime);
 
+
+    /**
+     * 更新合伙人是否出售状态
+     * @param orderId
+     * @return
+     */
     @Transactional
     @Modifying
     @Query(value = "update user_partner SET  partner_status = 0,payment_status=1 where order_id=?1",nativeQuery = true)
     int updateUserPartnerOwnForOderId(String orderId);
 
+    /**
+     * 更新订单支付状态
+     * @param orderId
+     * @param paymentStatus
+     * @return
+     */
     @Transactional
     @Modifying
     @Query(value = "update user_partner SET  payment_status=?2 where order_id=?1",nativeQuery = true)
     int updatePaymentStatusForOrderId(String orderId,int paymentStatus);
+
+
+    /**
+     * 更新合伙人收益
+     * @param orderId
+     * @param paymentStatus
+     * @return
+     */
+    @Transactional
+    @Modifying
+    @Query(value = "update user_partner SET partner_income=partner_income+?3 where partner_day=?1 and partner_status=?2",nativeQuery = true)
+    int updatePartnerIncome(String partnerDay,int partnerStatus,BigDecimal partnerIncome);
 }

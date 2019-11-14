@@ -3,6 +3,7 @@ package com.ginko.driver.api.httpClient;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.ginko.driver.common.tolls.TokenTools;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -94,8 +95,8 @@ public class HttpClientUtil {
      * @param jsonParam 参数
      * @return
      */
-    public static JSON httpPost(String url, JSONObject jsonParam) {
-        return httpPost(url, jsonParam, false);
+    public static JSON httpPost(String url, String jsonParam,String token) {
+        return httpPost(url, jsonParam,token, false);
     }
 
     /**
@@ -106,17 +107,19 @@ public class HttpClientUtil {
      * @param noNeedResponse 不需要返回结果
      * @return
      */
-    public static JSON httpPost(String url, JSON jsonParam, boolean noNeedResponse) {
+    public static JSON httpPost(String url, String jsonParam,String token, boolean noNeedResponse) {
 
         //post请求返回结果
         DefaultHttpClient httpClient = new DefaultHttpClient();
         JSON jsonResult = null;
         HttpPost method = new HttpPost(url);
-        method.setHeader("","");
+      /*  String token1 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzQyOTk1ODQsImlhdCI6MTU3MzY5NDc4NCwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjMxfX0.pE0FkgHYS1_Cc_ZYyAaCy8UgOCA4Hccn5pyuvXJX76Wa93LsQg3g6GrLXD2hPk0VeXaP_yQUPJFLbZUBtjTs2VghXwlbqylxLnL8t_xFlV2CdRrPmqWtAucQr5eRBlcjSfeC-yLQSFLFy0kMJxfNy3xTSUF9t8iTY_3pfyRc_xqZZnBVKwT-gSH14SbtKj_RNm4wdDoxC4-gwdFbPUUSFsHJHdIWP8TsDRyfJ0dDNV2t_eSsI3XXVi8cKLoVobPASKesDzwiEEKPYDcTUZE7BOJBMY8xSdgwWpE2aLrun8KNxfFMpx5f2w_6hnrYp9WQmJwfvjMx4K-KlOvuJ1e_kg";
+        method.setHeader("Authorization", token1);*/
+        method.setHeader("Authorization",token);
         try {
             if (null != jsonParam) {
                 //解决中文乱码问题
-                StringEntity entity = new StringEntity(jsonParam.toString(), "utf-8");
+                StringEntity entity = new StringEntity(jsonParam, "utf-8");
                 entity.setContentEncoding("UTF-8");
                 entity.setContentType("application/json");
                 method.setEntity(entity);
@@ -229,6 +232,10 @@ public class HttpClientUtil {
 
     public static void main(String[] args) {
         //https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny --人民币兑换BSV
-
+        String json = "{\"orderId\":\"7224dcb1006845f5b2f547249dea24a\"}";
+        String url = "https://www.timesv.com/timesv/order/v1/wechat/qrcode/generate";
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzQyOTk1ODQsImlhdCI6MTU3MzY5NDc4NCwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjMxfX0.pE0FkgHYS1_Cc_ZYyAaCy8UgOCA4Hccn5pyuvXJX76Wa93LsQg3g6GrLXD2hPk0VeXaP_yQUPJFLbZUBtjTs2VghXwlbqylxLnL8t_xFlV2CdRrPmqWtAucQr5eRBlcjSfeC-yLQSFLFy0kMJxfNy3xTSUF9t8iTY_3pfyRc_xqZZnBVKwT-gSH14SbtKj_RNm4wdDoxC4-gwdFbPUUSFsHJHdIWP8TsDRyfJ0dDNV2t_eSsI3XXVi8cKLoVobPASKesDzwiEEKPYDcTUZE7BOJBMY8xSdgwWpE2aLrun8KNxfFMpx5f2w_6hnrYp9WQmJwfvjMx4K-KlOvuJ1e_kg";
+        JSON J = httpPost(url,json,token);
+        System.out.println(J);
     }
 }

@@ -7,16 +7,16 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import java.util.Map;
 
 public class TokenTools {
-    public static Integer userId = 0;
-
+    public  Integer userId = 0;
     /**
      * 获取userId
      * @param token
      */
-    public static void getUserIdFromToken(String token){
-        DecodedJWT decode = JWT.decode(token);
+    public static Integer getUserIdFromToken(String tokenP){
+        DecodedJWT decode = JWT.decode(tokenP);
         Claim userIdr = decode.getClaim("data");
         Map<String,Object> map = userIdr.asMap();
-         userId = (Integer) map.get("userId");
+        return  (Integer) map.get("userId");
     }
+
 }

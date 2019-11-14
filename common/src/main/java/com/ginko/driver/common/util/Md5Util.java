@@ -20,8 +20,6 @@ public class Md5Util {
 
 
     public static void main(String[] args) {
-        String x = getMD5("123123aa");
-        System.out.println(x);
-        System.out.println(x.length());
+        System.out.println("b8ba3e0581824bf6a3f310f8c42d".length());
     }
 }

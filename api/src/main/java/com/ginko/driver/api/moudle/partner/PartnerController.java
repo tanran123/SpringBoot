@@ -1,8 +1,10 @@
 package com.ginko.driver.api.moudle.partner;
 
+import com.alibaba.fastjson.JSON;
 import com.ginko.driver.api.httpClient.HttpClientUtil;
 import com.ginko.driver.api.md5.Md5Util;
 import com.ginko.driver.common.entity.MsgConfig;
+import com.ginko.driver.common.tolls.TokenTools;
 import com.ginko.driver.framework.entity.Partner;
 import com.ginko.driver.framework.entity.UserPartner;
 import com.ginko.driver.framework.service.PartnerService;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -106,6 +109,7 @@ public class PartnerController {
         if (partnerService.findByPartnerDay(getNowDate(0)) == null) {
             addPartner(0);
         }
+        partnerService.updatePartnerViewCount(getNowDate(0));
         return new MsgConfig("0", null, partnerData);
     }
 
@@ -115,10 +119,10 @@ public class PartnerController {
      * @return
      */
     @RequestMapping(value = "/getTodayPartner")
-    public MsgConfig getTodayPartner() {
+    public MsgConfig getTodayPartner(HttpServletRequest request) {
+        Integer userId = TokenTools.getUserIdFromToken(request.getHeader("Authorization"));
         //如果今日合伙人为空
         Partner partner = partnerService.findByPartnerDay(getNowDate(0));
-        partnerService.updatePartnerViewCount(getNowDate(0));
         return new MsgConfig("0", null, partner);
     }
 
@@ -219,7 +223,7 @@ public class PartnerController {
         partner.setPartnerUserId(0);
         partner.setSellStatus(1);
         partner.setPrice(new BigDecimal("1000"));
-        partner.setBsvPrice(new BigDecimal("1000").divide(cny,7,RoundingMode.HALF_UP));
+        partner.setBsvPrice(new BigDecimal("1000").divide(cny,8,RoundingMode.HALF_UP));
         return partnerService.addPartner(partner);
     }
 
@@ -235,7 +239,9 @@ public class PartnerController {
         userPartner.setPartnerStatus(0);
         userPartner.setUserId(0);
         userPartner.setPaymentStatus(1);
-        partnerService.updatePartnerSellStatusAndPrice(0,partner.getPrice(),partner.getPartnerId());
+        BigDecimal cny = HttpClientUtil.getCny();
+        partner.setBsvPrice(partner.getPrice().divide(cny,8,RoundingMode.HALF_UP));
+        partnerService.updatePartnerSellStatusAndPrice(0,partner.getPrice(),partner.getPartnerId(),partner.getBsvPrice());
         return userPartnerService.addUserPartner(userPartner);
     }
 
@@ -270,6 +276,7 @@ public class PartnerController {
     public MsgConfig buyPartner(@RequestBody UserPartner userPartner) {
         Partner partner = partnerService.findByPartnerId(userPartner.getPartnerId());
         userPartner.setBuyPrice(partner.getPrice());
+        userPartner.setBuyBsvPrice(partner.getBsvPrice());
         return partnerService.buyPartner(userPartner);
     }
 
@@ -296,7 +303,43 @@ public class PartnerController {
 
     @RequestMapping("/updatePartnerSellStatus")
     public MsgConfig updatePartnerSellStatus(@RequestBody Partner partner){
+        BigDecimal cny = HttpClientUtil.getCny();
+        partner.setBsvPrice(partner.getPrice().divide(cny,8,RoundingMode.HALF_UP));
         return new MsgConfig("0",null,
-                partnerService.updatePartnerSellStatusAndPrice(partner.getSellStatus(),partner.getPrice(),partner.getPartnerId()));
+                partnerService.updatePartnerSellStatusAndPrice(partner.getSellStatus(),partner.getPrice(),partner.getPartnerId(),partner.getBsvPrice()));
     }
+
+
+    /**
+     * 拉取二维码支付
+     * @param userPartner
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getWechatQrCode")
+    public MsgConfig getWechatQrCode(@RequestBody UserPartner userPartner,HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        String url = "https://www.timesv.com/timesv/order/v1/wechat/qrcode/generate";
+        String jsonP = "{\"orderId\":\""+userPartner.getOrderId()+"\"}";
+        JSON json = HttpClientUtil.httpPost(url,jsonP,token);
+        return new MsgConfig("0",null, json);
+    }
+
+
+    /**
+     * 更新合伙人收益
+     * @param userPartner
+     * @return
+     */
+    @RequestMapping("/updatePartnerIncome")
+    public MsgConfig updatePartnerIncome(UserPartner userPartner){
+        int count = partnerService.updatePartnerIncome(userPartner);
+        if (count>0){
+            return new MsgConfig("0","收益修改成功",null);
+        }
+        else{
+            return new MsgConfig("-1","修改失败",null);
+        }
+    }
+
 }

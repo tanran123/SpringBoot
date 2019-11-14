@@ -190,8 +190,8 @@ public class PartnerService {
         return userPartnerDao.save(userPartner);
     }
 
-    public int updatePartnerSellStatusAndPrice(int sellStatus,BigDecimal price,int partnerId){
-        return partnerDao.updatePartnerSellStatusAndPrice(sellStatus,partnerId,price);
+    public int updatePartnerSellStatusAndPrice(int sellStatus,BigDecimal price,int partnerId,BigDecimal bsvPrice){
+        return partnerDao.updatePartnerSellStatusAndPrice(sellStatus,partnerId,price,bsvPrice);
     }
 
     /**
@@ -233,7 +233,22 @@ public class PartnerService {
     }
 
 
+    /**
+     * 修改访问次数
+     * @param partnerDay
+     * @return
+     */
     public int updatePartnerViewCount(String partnerDay){
         return partnerDao.updatePartnerViewCount(partnerDay);
+    }
+
+
+    /**
+     * 修改合伙人收入
+     * @param userPartner
+     * @return
+     */
+    public int updatePartnerIncome(UserPartner userPartner){
+        return userPartnerDao.updatePartnerIncome(userPartner.getPartnerDay(),userPartner.getPartnerStatus(),userPartner.getPartnerIncom());
     }
 }

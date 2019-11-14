@@ -2,6 +2,7 @@ package com.ginko.driver.api.moudle.payment;
 
 import com.ginko.driver.api.webSocket.CustomerWebSoket;
 import com.ginko.driver.api.webSocket.WebSocketReturnType;
+import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.framework.entity.Partner;
 import com.ginko.driver.framework.service.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,13 @@ public class PaymentController {
      * @param webSocketReturnType
      */
     @RequestMapping(value = "/paymentStatus",method = RequestMethod.POST)
-    public void getPayment(@RequestBody WebSocketReturnType webSocketReturnType){
+    public MsgConfig getPayment(@RequestBody WebSocketReturnType webSocketReturnType){
         partnerService.successPayMnet(webSocketReturnType.getOrderCode(),webSocketReturnType.isPaymentStatus());
         try {
             CustomerWebSoket.sendByOrderCode(webSocketReturnType);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return new MsgConfig("0","success",null);
     }
 }
