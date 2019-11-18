@@ -3,24 +3,22 @@ package com.ginko.driver.api.moudle.partner;
 import com.alibaba.fastjson.JSON;
 import com.ginko.driver.api.httpClient.HttpClientUtil;
 import com.ginko.driver.api.md5.Md5Util;
+import com.ginko.driver.api.webSocket.CustomerWebSoket;
+import com.ginko.driver.framework.entity.WebSocketReturnType;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.tolls.TokenTools;
 import com.ginko.driver.framework.entity.Partner;
 import com.ginko.driver.framework.entity.UserPartner;
 import com.ginko.driver.framework.service.PartnerService;
 import com.ginko.driver.framework.service.UserPartnerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.annotation.Schedules;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -51,27 +49,32 @@ public class PartnerController {
      */
     @Scheduled(cron = "0 0/5 * * * ?")
     public void getPartnerPrice() {
-        BigDecimal cny = HttpClientUtil.getCny();
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int min = calendar.get(Calendar.MINUTE);
-        Partner partner = partnerService.findByPartnerDay(getNowDate(0));
-        //查看今日partner是否已经出售
-        if (partner.getPartnerUserId()==0){ //未出售
-            currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
-            bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
-            partnerService.updatePartnerPrice(0,currentPrice,getNowDate(0),bsvCurrentPrice);
+        if (partnerData.getPriceData().size() == 0) {
+            addPrice();
         }
-        else{ //已出售
-            currentPrice = partner.getPrice();
-            bsvCurrentPrice = partner.getBsvPrice();
+        else{
+            BigDecimal cny = HttpClientUtil.getCny();
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int min = calendar.get(Calendar.MINUTE);
+            Partner partner = partnerService.findByPartnerDay(getNowDate(0));
+            //查看今日partner是否已经出售
+            if (partner.getPartnerUserId()==0){ //未出售
+                currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
+                bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
+                partnerService.updatePartnerPrice(0,currentPrice,getNowDate(0),bsvCurrentPrice);
+            }
+            else{ //已出售
+                currentPrice = partner.getPrice();
+                bsvCurrentPrice = partner.getBsvPrice();
 
+            }
+            String nowHour = hour < 10 ? "0" + hour : String.valueOf(hour);
+            String nowMin = min < 10 ? "0" + min : String.valueOf(min);
+            partnerData.getDataTime().add(nowHour + ":" + nowMin); //设置当前时间
+            partnerData.getPriceData().add(currentPrice);       //写入当前现金价格
+            partnerData.getBsvPriceData().add(bsvCurrentPrice);    //写入当前BSV价格
         }
-        String nowHour = hour < 10 ? "0" + hour : String.valueOf(hour);
-        String nowMin = min < 10 ? "0" + min : String.valueOf(min);
-        partnerData.getDataTime().add(nowHour + ":" + nowMin); //设置当前时间
-        partnerData.getPriceData().add(currentPrice);       //写入当前现金价格
-        partnerData.getBsvPriceData().add(bsvCurrentPrice);    //写入当前BSV价格
     }
 
     /**
@@ -79,20 +82,17 @@ public class PartnerController {
      */
     @Scheduled(cron = "0 59 23 * * ?")
     public void updateTody() {
-        Partner partner = partnerService.findByPartnerDay(getNowDate(0));
-        //判断今日合伙人是否已出售
-        if (partner.getPartnerUserId() == 0) {
-            //没出售将合伙人划分到平台账户
-            addUserPartner(partner);
-        }
         //添加明日合伙人记录
-        addPartner(1);
+        Partner partner = addPartner(1);
+        addUserPartner(partner);
     }
 
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void clear() {
-        partnerData = new PartnerData();
+        partnerData.getBsvPriceData().clear();
+        partnerData.getDataTime().clear();
+        partnerData.getPriceData().clear();
         currentPrice = price;
     }
 
@@ -104,11 +104,11 @@ public class PartnerController {
     @RequestMapping(value = "/getAllPrice")
     public MsgConfig getAllPrice() {
         //如果今日合伙人为空
-        partnerData.view();
-        addPrice();
         if (partnerService.findByPartnerDay(getNowDate(0)) == null) {
             addPartner(0);
         }
+        partnerData.view();
+        addPrice();
         partnerService.updatePartnerViewCount(getNowDate(0));
         return new MsgConfig("0", null, partnerData);
     }
@@ -165,16 +165,18 @@ public class PartnerController {
             }
             /*写入当前小时的数据*/
             StringBuffer stringBufferMin = new StringBuffer("");
-            for (int i = 0; i <= min; i += 5) {
-                stringBufferMin.setLength(0);
-                //放入现金价格
-                currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
-                partnerData.getPriceData().add(currentPrice);
-                //放入BSV价格
-                bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
-                partnerData.getBsvPriceData().add(bsvCurrentPrice);
-                stringBufferMin.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
-                partnerData.getDataTime().add(hour + ":" + stringBufferMin);
+            if(!(hour==0&&min<5)){
+                for (int i = 0; i <= min; i += 5) {
+                    stringBufferMin.setLength(0);
+                    //放入现金价格
+                    currentPrice = currentPrice.subtract(new BigDecimal("3.45"));
+                    partnerData.getPriceData().add(currentPrice);
+                    //放入BSV价格
+                    bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
+                    partnerData.getBsvPriceData().add(bsvCurrentPrice);
+                    stringBufferMin.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
+                    partnerData.getDataTime().add(hour + ":" + stringBufferMin);
+                }
             }
         }
     }
@@ -234,14 +236,14 @@ public class PartnerController {
         id = Md5Util.getMD5(id);
         UserPartner userPartner = new UserPartner();
         userPartner.setOrderId(id);
-        userPartner.setPartnerDay(getNowDate(0));
+        userPartner.setPartnerDay(partner.getPartnerDay());
         userPartner.setPartnerId(partner.getPartnerId());
         userPartner.setPartnerStatus(0);
+        userPartner.setPartnerIncome(new BigDecimal("0"));
         userPartner.setUserId(0);
         userPartner.setPaymentStatus(1);
         BigDecimal cny = HttpClientUtil.getCny();
         partner.setBsvPrice(partner.getPrice().divide(cny,8,RoundingMode.HALF_UP));
-        partnerService.updatePartnerSellStatusAndPrice(0,partner.getPrice(),partner.getPartnerId(),partner.getBsvPrice());
         return userPartnerService.addUserPartner(userPartner);
     }
 
@@ -332,7 +334,7 @@ public class PartnerController {
      * @return
      */
     @RequestMapping("/updatePartnerIncome")
-    public MsgConfig updatePartnerIncome(UserPartner userPartner){
+    public MsgConfig updatePartnerIncome(@RequestBody UserPartner userPartner){
         int count = partnerService.updatePartnerIncome(userPartner);
         if (count>0){
             return new MsgConfig("0","收益修改成功",null);
@@ -341,5 +343,32 @@ public class PartnerController {
             return new MsgConfig("-1","修改失败",null);
         }
     }
+    /**
+     * BSV汇率
+     * @param userPartner
+     * @return
+     */
+    @RequestMapping("/getCnyForBsv")
+    public MsgConfig getCnyForBsv(@RequestBody Partner partner){
+        BigDecimal bsvPrice=partner.getPrice().divide(HttpClientUtil.getCny(),8,RoundingMode.HALF_UP);
+        return new MsgConfig("0",null,bsvPrice);
+    }
 
+    /**
+     * 各种支付回调
+     * @param webSocketReturnType
+     */
+    @RequestMapping(value = "/paymentStatus")
+    public MsgConfig getPayment(@RequestBody WebSocketReturnType webSocketReturnType){
+        //partner付款的回调逻辑
+        if ("partner".equals(webSocketReturnType.getPaymentType())){
+            partnerService.successPayMnet(webSocketReturnType.getOrderCode(),webSocketReturnType.isPaymentStatus());
+        }
+        try {
+            CustomerWebSoket.sendByOrderCode(webSocketReturnType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new MsgConfig("0","success",null);
+    }
 }

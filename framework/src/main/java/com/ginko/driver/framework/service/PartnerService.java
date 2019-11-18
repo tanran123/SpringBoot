@@ -185,7 +185,7 @@ public class PartnerService {
         userPartner.setPartnerStatus(2);
         userPartner.setPaymentStatus(0);
         userPartner.setSellPrice(userPartner.getBuyPrice());
-        userPartner.setPartnerIncom(new BigDecimal("0"));
+        userPartner.setPartnerIncome(new BigDecimal("0"));
         partnerDao.updateLockStatusAndLockTimeAndUserId(userPartner.getPartnerId(), 1, getNowDateTime(), userPartner.getUserId());
         return userPartnerDao.save(userPartner);
     }
@@ -249,6 +249,6 @@ public class PartnerService {
      * @return
      */
     public int updatePartnerIncome(UserPartner userPartner){
-        return userPartnerDao.updatePartnerIncome(userPartner.getPartnerDay(),userPartner.getPartnerStatus(),userPartner.getPartnerIncom());
+        return userPartnerDao.updatePartnerIncome(userPartner.getPartnerDay(),0,userPartner.getPartnerIncome());
     }
 }

@@ -703,10 +703,6 @@ public class DateTool {
 				.getTime().getTime()) / 86400000L);
 	}
 
-	public static void main(String[] args) throws ParseException {
-		System.out.println(getNowTime());
-	}
-	
 	public static SimpleDateFormat getSimpleDateFormat(){
 		return shortFormat;
 		

@@ -19,7 +19,4 @@ public class Md5Util {
     }
 
 
-    public static void main(String[] args) {
-        System.out.println("b8ba3e0581824bf6a3f310f8c42d".length());
-    }
 }

@@ -233,7 +233,7 @@ public class HttpClientUtil {
     public static void main(String[] args) {
         //https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny --人民币兑换BSV
         String json = "{\"orderId\":\"7224dcb1006845f5b2f547249dea24a\"}";
-        String url = "https://www.timesv.com/timesv/order/v1/wechat/qrcode/generate";
+        String url = "https://www.timesv.com/sv/order/v1/wechat/qrcode/generate";
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzQyOTk1ODQsImlhdCI6MTU3MzY5NDc4NCwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjMxfX0.pE0FkgHYS1_Cc_ZYyAaCy8UgOCA4Hccn5pyuvXJX76Wa93LsQg3g6GrLXD2hPk0VeXaP_yQUPJFLbZUBtjTs2VghXwlbqylxLnL8t_xFlV2CdRrPmqWtAucQr5eRBlcjSfeC-yLQSFLFy0kMJxfNy3xTSUF9t8iTY_3pfyRc_xqZZnBVKwT-gSH14SbtKj_RNm4wdDoxC4-gwdFbPUUSFsHJHdIWP8TsDRyfJ0dDNV2t_eSsI3XXVi8cKLoVobPASKesDzwiEEKPYDcTUZE7BOJBMY8xSdgwWpE2aLrun8KNxfFMpx5f2w_6hnrYp9WQmJwfvjMx4K-KlOvuJ1e_kg";
         JSON J = httpPost(url,json,token);
         System.out.println(J);

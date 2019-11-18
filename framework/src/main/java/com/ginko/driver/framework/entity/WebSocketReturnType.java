@@ -1,4 +1,5 @@
-package com.ginko.driver.api.webSocket;
+package com.ginko.driver.framework.entity;
+
 
 /**
  * @Auther: tran

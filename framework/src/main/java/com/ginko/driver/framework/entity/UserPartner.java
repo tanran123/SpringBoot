@@ -15,7 +15,7 @@ public class UserPartner extends CommandEntity{
     private int id;
     private int userId;
     private int partnerId;
-    private BigDecimal partnerIncom;
+    private BigDecimal partnerIncome;
     private String buyDatetime;
     private String sellDatetime;
     private int partnerStatus;
@@ -121,12 +121,12 @@ public class UserPartner extends CommandEntity{
         this.partner = partner;
     }
 
-    public BigDecimal getPartnerIncom() {
-        return partnerIncom;
+    public BigDecimal getPartnerIncome() {
+        return partnerIncome;
     }
 
-    public void setPartnerIncom(BigDecimal partnerIncom) {
-        this.partnerIncom = partnerIncom;
+    public void setPartnerIncome(BigDecimal partnerIncome) {
+        this.partnerIncome = partnerIncome;
     }
 
     public String getBuyDatetime() {
