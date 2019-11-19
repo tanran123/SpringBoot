@@ -226,7 +226,8 @@ public class HttpClientUtil {
      */
     public static BigDecimal getCny(){
         JSON j = httpGet("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny");
-        Double cny = ((JSONObject) j).getJSONObject("bitcoin-cash-sv").getDouble("cny");
+//        Double cny = ((JSONObject) j).getJSONObject("bitcoin-cash-sv").getDouble("cny");
+         Double cny= 800.00;
         return new BigDecimal(cny);
     }
 
