@@ -49,6 +49,8 @@ public class CustomerWebSoket  {
 
     private String socketId;
 
+    private String payType; //cancel
+
 
 
 

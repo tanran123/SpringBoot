@@ -36,6 +36,7 @@ public class PartnerController {
     private static BigDecimal price = new BigDecimal("200.00");
     private static BigDecimal currentPrice = new BigDecimal("200.00");
     private static BigDecimal bsvCurrentPrice = new BigDecimal("0.00000001");
+    private static BigDecimal sbtPrice = new BigDecimal("0.69");
 
     @Autowired
     private PartnerService partnerService;
@@ -60,7 +61,7 @@ public class PartnerController {
             Partner partner = partnerService.findByPartnerDay(getNowDate(0));
             //查看今日partner是否已经出售
             if (partner.getPartnerUserId()==0){ //未出售
-                currentPrice = currentPrice.subtract(new BigDecimal("0.138"));
+                currentPrice = currentPrice.subtract(sbtPrice);
                 bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
                 partnerService.updatePartnerPrice(0,currentPrice,getNowDate(0),bsvCurrentPrice);
             }
@@ -154,7 +155,7 @@ public class PartnerController {
                     stringBuffer.setLength(0);
                     //放入现金价格
                     if (!(i==0&&j==0)){
-                        currentPrice = currentPrice.subtract(new BigDecimal("0.138"));
+                        currentPrice = currentPrice.subtract(sbtPrice);
                     }
                     partnerData.getPriceData().add(currentPrice);
                     //放入BSV价格
@@ -171,7 +172,7 @@ public class PartnerController {
                 for (int i = 0; i <= min; i += 5) {
                     stringBufferMin.setLength(0);
                     //放入现金价格
-                    currentPrice = currentPrice.subtract(new BigDecimal("0.138"));
+                    currentPrice = currentPrice.subtract(sbtPrice);
                     partnerData.getPriceData().add(currentPrice);
                     //放入BSV价格
                     bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
