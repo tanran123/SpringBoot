@@ -212,23 +212,6 @@ public class PartnerService {
             userPartnerDao.updateUserPartnerOwn(userPartner.getPartnerId(),userPartner.getSellUserId(),getNowDateTime());
             //更新支付及持有状态
             userPartnerDao.updateUserPartnerOwnForOderId(orderId);
-            //0：收入 1：支出
-            UserIncom userIncom = new UserIncom();
-            userIncom.setUserId(partner.getPartnerUserId());
-            userIncom.setDescription(0);
-            userIncom.setMoney(userPartner.getBuyPrice());
-            userIncom.setTime(getNowDateTime());
-            userIncom.setType(0);
-            userIncom.setOrderCode(userPartner.getOrderId());
-            userIncomDao.save(userIncom);
-            UserIncom userIncom1 = new UserIncom();
-            userIncom1.setDescription(0);
-            userIncom1.setMoney(userPartner.getBuyPrice());
-            userIncom1.setTime(getNowDateTime());
-            userIncom1.setOrderCode(userPartner.getOrderId());
-            userIncom1.setType(1);
-            userIncom1.setUserId(userPartner.getUserId());
-            userIncomDao.save(userIncom1);
         }
     }
 

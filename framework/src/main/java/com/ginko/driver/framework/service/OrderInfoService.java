@@ -4,6 +4,7 @@ import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.util.DateTool;
 import com.ginko.driver.framework.dao.OrderInfoDao;
 import com.ginko.driver.framework.entity.OrderInfo;
+import com.ginko.driver.framework.entity.UserOrderInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,18 +24,13 @@ public class OrderInfoService {
 
     @Autowired
     private OrderInfoDao orderInfoDao;
-    public List<OrderInfo> findByUserId(OrderInfo orderInfo){
-        return orderInfoDao.findByUserIdAndMoneyTypeOrderByCreateTimeDesc(orderInfo.getUserId(),orderInfo.getMoneyType());
+
+    public Page<UserOrderInfo> findByUserOrder(UserOrderInfo userOrderInfo){
+        return orderInfoDao.findByUserIdAndOrderStatus(userOrderInfo.getUserId(),userOrderInfo.getOrderStatus(),PageRequest.of(userOrderInfo.getPage() - 1, userOrderInfo.getSize()));
     }
 
-
-    public Page<OrderInfo> findByUserIdAndPage(OrderInfo orderInfo){
-        return orderInfoDao.findByUserIdAndMoneyTypeOrderByCreateTimeDesc(orderInfo.getUserId(),orderInfo.getMoneyType(),PageRequest.of(orderInfo.getPage()-1,orderInfo.getSize()));
+    public int updateUserOrder(UserOrderInfo userOrderInfo){
+        return orderInfoDao.updateUserOrder(userOrderInfo.getOrderStatus(),userOrderInfo.getOrderNumber());
     }
-
-    public int update(OrderInfo orderInfo){
-        return orderInfoDao.updateOrderTransactionStatus(orderInfo.getId(),orderInfo.getTransactionStatus());
-    }
-
 
 }

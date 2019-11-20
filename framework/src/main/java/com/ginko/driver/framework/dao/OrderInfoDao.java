@@ -1,6 +1,7 @@
 package com.ginko.driver.framework.dao;
 
 import com.ginko.driver.framework.entity.OrderInfo;
+import com.ginko.driver.framework.entity.UserOrderInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,22 +19,17 @@ import java.util.List;
  * @Date Create in 13:59 2019/7/22
  */
 @Repository
-public interface OrderInfoDao extends CrudRepository<OrderInfo,Long> {
+public interface OrderInfoDao extends CrudRepository<UserOrderInfo,Long> {
 
-    OrderInfo save(OrderInfo orderInfo);
+     List<UserOrderInfo> findAll();
 
-    /**
-     * 卖方ID
-     * @param sellerId
-     * @return
-     */
-    List<OrderInfo> findByUserIdAndMoneyTypeOrderByCreateTimeDesc(int userId,int status);
+     List<UserOrderInfo> findByUserId(int userId);
 
-    Page<OrderInfo> findByUserIdAndMoneyTypeOrderByCreateTimeDesc(int userId, int status, Pageable pageable);
+     Page<UserOrderInfo> findByUserIdAndOrderStatus(int userId,int orderStatus,Pageable pageable);
 
 
-    @Transactional
-    @Modifying
-    @Query(value = "update sys_order_info  transaction_status = ?2, update_time = DATE_FORMAT(NOW(),'%Y-%m-%d %T')where user_id=?1",nativeQuery = true)
-    int updateOrderTransactionStatus(int id,Integer status);
+     @Transactional
+     @Modifying
+     @Query(value = "update user_order SET  order_status=?1 where order_number=?2",nativeQuery = true)
+     int updateUserOrder(int orderStatus,String orderNumber);
 }

@@ -52,20 +52,18 @@ public class PartnerController {
     public void getPartnerPrice() {
         if (partnerData.getPriceData().size() == 0) {
             addPrice();
-        }
-        else{
+        } else {
             BigDecimal cny = HttpClientUtil.getCny();
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int min = calendar.get(Calendar.MINUTE);
             Partner partner = partnerService.findByPartnerDay(getNowDate(0));
             //查看今日partner是否已经出售
-            if (partner.getPartnerUserId()==0){ //未出售
+            if (partner.getPartnerUserId() == 0) { //未出售
                 currentPrice = currentPrice.subtract(sbtPrice);
-                bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
-                partnerService.updatePartnerPrice(0,currentPrice,getNowDate(0),bsvCurrentPrice);
-            }
-            else{ //已出售
+                bsvCurrentPrice = currentPrice.divide(cny, 8, RoundingMode.HALF_UP);
+                partnerService.updatePartnerPrice(0, currentPrice, getNowDate(0), bsvCurrentPrice);
+            } else { //已出售
                 currentPrice = partner.getPrice();
                 bsvCurrentPrice = partner.getBsvPrice();
 
@@ -148,18 +146,19 @@ public class PartnerController {
             StringBuffer stringBuffer = new StringBuffer("");
             StringBuffer stringBufferHour = new StringBuffer("");
             /*将之前T-1小时的数据写入partnerData*/
+            if ((hour==0)){
+
+            }
             for (int i = 0; i < hour; i++) {
                 stringBufferHour.setLength(0);
                 stringBufferHour.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
                 for (int j = 0; j < 12; j++) {
                     stringBuffer.setLength(0);
                     //放入现金价格
-                    if (!(i==0&&j==0)){
-                        currentPrice = currentPrice.subtract(sbtPrice);
-                    }
+                    currentPrice = currentPrice.subtract(sbtPrice);
                     partnerData.getPriceData().add(currentPrice);
                     //放入BSV价格
-                    bsvCurrentPrice = currentPrice.divide(cny,8, RoundingMode.HALF_UP);
+                    bsvCurrentPrice = currentPrice.divide(cny, 8, RoundingMode.HALF_UP);
                     partnerData.getBsvPriceData().add(bsvCurrentPrice);
                     int oldMin = j * 5;
                     stringBuffer.append(oldMin < 10 ? "0" + String.valueOf(oldMin) : String.valueOf(oldMin));
@@ -168,14 +167,14 @@ public class PartnerController {
             }
             /*写入当前小时的数据*/
             StringBuffer stringBufferMin = new StringBuffer("");
-            if(!(hour==0&&min<5)){
+            if (!(hour == 0 && min < 5)) {
                 for (int i = 0; i <= min; i += 5) {
                     stringBufferMin.setLength(0);
                     //放入现金价格
                     currentPrice = currentPrice.subtract(sbtPrice);
                     partnerData.getPriceData().add(currentPrice);
                     //放入BSV价格
-                    bsvCurrentPrice = currentPrice.divide(cny,8,RoundingMode.HALF_UP);
+                    bsvCurrentPrice = currentPrice.divide(cny, 8, RoundingMode.HALF_UP);
                     partnerData.getBsvPriceData().add(bsvCurrentPrice);
                     stringBufferMin.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
                     partnerData.getDataTime().add(hour + ":" + stringBufferMin);
@@ -228,7 +227,7 @@ public class PartnerController {
         partner.setPartnerUserId(0);
         partner.setSellStatus(1);
         partner.setPrice(new BigDecimal("200"));
-        partner.setBsvPrice(new BigDecimal("200").divide(cny,8,RoundingMode.HALF_UP));
+        partner.setBsvPrice(new BigDecimal("200").divide(cny, 8, RoundingMode.HALF_UP));
         return partnerService.addPartner(partner);
     }
 
@@ -246,7 +245,7 @@ public class PartnerController {
         userPartner.setUserId(0);
         userPartner.setPaymentStatus(1);
         BigDecimal cny = HttpClientUtil.getCny();
-        partner.setBsvPrice(partner.getPrice().divide(cny,8,RoundingMode.HALF_UP));
+        partner.setBsvPrice(partner.getPrice().divide(cny, 8, RoundingMode.HALF_UP));
         return userPartnerService.addUserPartner(userPartner);
     }
 
@@ -287,91 +286,97 @@ public class PartnerController {
 
     /**
      * 出售的信息
+     *
      * @param partner
      * @return
      */
     @RequestMapping("/getSellPartner")
-    public MsgConfig getSellPartner(@RequestBody Partner partner){
-        return new MsgConfig("0",null,partnerService.findBySellStatus(partner));
+    public MsgConfig getSellPartner(@RequestBody Partner partner) {
+        return new MsgConfig("0", null, partnerService.findBySellStatus(partner));
     }
 
     /**
      * 用户拥有的合伙人信息
+     *
      * @param partner
      * @return
      */
     @RequestMapping("/getUsersPartner")
-    public MsgConfig getUsersPartner(@RequestBody UserPartner partner){
-        return new MsgConfig("0",null,partnerService.findByPartnerUserId(partner));
+    public MsgConfig getUsersPartner(@RequestBody UserPartner partner) {
+        return new MsgConfig("0", null, partnerService.findByPartnerUserId(partner));
     }
 
 
     @RequestMapping("/updatePartnerSellStatus")
-    public MsgConfig updatePartnerSellStatus(@RequestBody Partner partner){
+    public MsgConfig updatePartnerSellStatus(@RequestBody Partner partner) {
         BigDecimal cny = HttpClientUtil.getCny();
-        partner.setBsvPrice(partner.getPrice().divide(cny,8,RoundingMode.HALF_UP));
-        return new MsgConfig("0",null,
-                partnerService.updatePartnerSellStatusAndPrice(partner.getSellStatus(),partner.getPrice(),partner.getPartnerId(),partner.getBsvPrice()));
+        partner.setBsvPrice(partner.getPrice().divide(cny, 8, RoundingMode.HALF_UP));
+        return new MsgConfig("0", null,
+                partnerService.updatePartnerSellStatusAndPrice(partner.getSellStatus(), partner.getPrice(), partner.getPartnerId(), partner.getBsvPrice()));
     }
 
 
     /**
      * 拉取二维码支付
+     *
      * @param userPartner
      * @param request
      * @return
      */
     @RequestMapping("/getWechatQrCode")
-    public MsgConfig getWechatQrCode(@RequestBody UserPartner userPartner,HttpServletRequest request){
+    public MsgConfig getWechatQrCode(@RequestBody UserPartner userPartner, HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String url = "https://www.timesv.com/timesv/order/v1/wechat/qrcode/generate";
-        String jsonP = "{\"orderId\":\""+userPartner.getOrderId()+"\"}";
-        JSON json = HttpClientUtil.httpPost(url,jsonP,token);
-        return new MsgConfig("0",null, json);
+        String jsonP = "{\"orderId\":\"" + userPartner.getOrderId() + "\"}";
+        JSON json = HttpClientUtil.httpPost(url, jsonP, token);
+        return new MsgConfig("0", null, json);
     }
 
 
     /**
      * 更新合伙人收益
+     *
      * @param userPartner
      * @return
      */
     @RequestMapping("/updatePartnerIncome")
-    public MsgConfig updatePartnerIncome(@RequestBody UserPartner userPartner){
+    public MsgConfig updatePartnerIncome(@RequestBody UserPartner userPartner) {
         int count = partnerService.updatePartnerIncome(userPartner);
-        if (count>0){
-            return new MsgConfig("0","收益修改成功",null);
-        }
-        else{
-            return new MsgConfig("-1","修改失败",null);
+        if (count > 0) {
+            return new MsgConfig("0", "收益修改成功", null);
+        } else {
+            return new MsgConfig("-1", "修改失败", null);
         }
     }
+
     /**
      * BSV汇率
+     *
      * @param userPartner
      * @return
      */
     @RequestMapping("/getCnyForBsv")
-    public MsgConfig getCnyForBsv(@RequestBody Partner partner){
-        BigDecimal bsvPrice=partner.getPrice().divide(HttpClientUtil.getCny(),8,RoundingMode.HALF_UP);
-        return new MsgConfig("0",null,bsvPrice);
+    public MsgConfig getCnyForBsv(@RequestBody Partner partner) {
+        BigDecimal bsvPrice = partner.getPrice().divide(HttpClientUtil.getCny(), 8, RoundingMode.HALF_UP);
+        return new MsgConfig("0", null, bsvPrice);
     }
 
     /**
      * 各种支付回调
+     *
      * @param webSocketReturnType
      */
     @RequestMapping(value = "/paymentStatus")
-    public MsgConfig getPayment(@RequestBody WebSocketReturnType webSocketReturnType){
+    public MsgConfig getPayment(@RequestBody WebSocketReturnType webSocketReturnType) {
         //partner付款的回调逻辑
-        if ("partner".equals(webSocketReturnType.getPaymentType())){
-            partnerService.successPayMnet(webSocketReturnType.getOrderCode(),webSocketReturnType.isPaymentStatus());
+        if ("partner".equals(webSocketReturnType.getPaymentType())) {
+            partnerService.successPayMnet(webSocketReturnType.getOrderCode(), webSocketReturnType.isPaymentStatus());
         }
         try {
             CustomerWebSoket.sendByOrderCode(webSocketReturnType);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new MsgConfig("0","success",null);
+        return new MsgConfig("0", "success", null);
     }
 }
