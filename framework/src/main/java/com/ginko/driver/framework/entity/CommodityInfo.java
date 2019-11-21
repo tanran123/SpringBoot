@@ -24,8 +24,6 @@ public class CommodityInfo extends CommandEntity implements Serializable {
 
     private String description;
 
-    @Transient
-    private int isValid;
 
     @Transient
     private String label;
@@ -91,14 +89,6 @@ public class CommodityInfo extends CommandEntity implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getIsValid() {
-        return isValid;
-    }
-
-    public void setIsValid(int isValid) {
-        this.isValid = isValid;
     }
 
     public String getLabel() {

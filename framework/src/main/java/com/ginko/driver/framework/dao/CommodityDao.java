@@ -15,14 +15,14 @@ import java.math.BigDecimal;
 public interface CommodityDao extends CrudRepository<CommodityInfo,Long> {
 
     @Query(value = "SELECT\n" +
-            "\t* \n" +
+            "\t * \n" +
             "FROM\n" +
-            "\tcommodity co\n" +
-            "\tINNER JOIN user_order uo ON uo.commodity_number = co.commodity_number\n" +
+            "\t commodity commodity_id\n" +
+            "\t INNER JOIN user_order uo ON uo.commodity_number = commodity_id.commodity_number\n" +
             "WHERE\n" +
-            "  co.user_id=?1 \n" +
+            "  commodity_id.user_id=?1 \n" +
             "\tAND\n" +
-            "\tuo.order_status = 1 ORDER BY uo.consume_time DESC",nativeQuery = true)
+            "\t uo.order_status =2 ORDER BY uo.consume_time DESC",nativeQuery = true)
     Page<CommodityInfo> findByUserId(int userId, Pageable pageable);
 
 
