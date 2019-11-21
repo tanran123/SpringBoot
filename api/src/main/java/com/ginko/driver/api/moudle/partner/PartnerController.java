@@ -82,8 +82,11 @@ public class PartnerController {
     @Scheduled(cron = "0 59 23 * * ?")
     public void updateTody() {
         //添加明日合伙人记录
-        Partner partner = addPartner(1);
-        addUserPartner(partner);
+        Partner partnerQuery = partnerService.findByPartnerDay(getNowDate(1));
+        if (partnerQuery==null){
+            Partner partner = addPartner(1);
+            addUserPartner(partner);
+        }
     }
 
 

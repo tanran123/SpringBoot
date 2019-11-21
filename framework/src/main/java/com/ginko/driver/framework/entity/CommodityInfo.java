@@ -2,7 +2,8 @@ package com.ginko.driver.framework.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Entity
 @Table(name = "commodity")
@@ -19,7 +20,7 @@ public class CommodityInfo extends CommandEntity implements Serializable {
 
     private String title;
 
-    private int price;
+    private Double price;
 
     private String description;
 
@@ -33,7 +34,16 @@ public class CommodityInfo extends CommandEntity implements Serializable {
 
     private int userSellStatus;
 
-    private Date time;
+    private String time;
+
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = CommodityFile.class)
+    @JoinColumn(name="commodity_number",insertable = false,updatable = false,referencedColumnName = "commodity_number")
+    private Set<CommodityFile> commodityFiles = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = CommodityPhoto.class)
+    @JoinColumn(name="commodity_number",insertable = false,updatable = false,referencedColumnName = "commodity_number")
+    private Set<CommodityPhoto> commodityPhotos = new HashSet<>();
 
     public int getCommodityId() {
         return commodityId;
@@ -67,11 +77,11 @@ public class CommodityInfo extends CommandEntity implements Serializable {
         this.title = title;
     }
 
-    public int getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -115,11 +125,29 @@ public class CommodityInfo extends CommandEntity implements Serializable {
         this.userSellStatus = userSellStatus;
     }
 
-    public Date getTime() {
+    public String getTime() {
         return time;
     }
 
     public void setTime(Date time) {
-        this.time = time;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期时间格式
+        String format = dateFormat.format(time).replaceAll(".0","");//格式化一下
+        this.time = format;
+    }
+
+    public Set<CommodityFile> getCommodityFiles() {
+        return commodityFiles;
+    }
+
+    public void setCommodityFiles(Set<CommodityFile> commodityFiles) {
+        this.commodityFiles = commodityFiles;
+    }
+
+    public Set<CommodityPhoto> getCommodityPhotos() {
+        return commodityPhotos;
+    }
+
+    public void setCommodityPhotos(Set<CommodityPhoto> commodityPhotos) {
+        this.commodityPhotos = commodityPhotos;
     }
 }
