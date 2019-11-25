@@ -189,7 +189,6 @@ public class CustomerWebSoket  {
     @OnError
     public void onError(Session session, Throwable error) {
         System.out.println("----websocket-------有异常啦");
-        error.printStackTrace();
     }
 
     /**

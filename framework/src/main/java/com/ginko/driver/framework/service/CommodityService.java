@@ -25,6 +25,11 @@ public class CommodityService {
 
 
     public int updateCommodityPrice(CommodityInfo commodityInfo){
-        return commodityDao.updateCommodityPrice(commodityInfo.getCommodityNumber(),commodityInfo.getPrice().intValue());
+        return commodityDao.updateCommodityPrice(commodityInfo.getCommodityNumber(),commodityInfo.getPrice());
+    }
+
+
+    public int updateSellStatus(CommodityInfo commodityInfo){
+        return commodityDao.updateSellStatus(commodityInfo.getCommodityNumber(),commodityInfo.getUserSellStatus());
     }
 }

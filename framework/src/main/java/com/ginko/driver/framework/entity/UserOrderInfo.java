@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "user_order")
 public class UserOrderInfo extends CommandEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderId;
 
     private int userId;
@@ -27,27 +27,27 @@ public class UserOrderInfo extends CommandEntity implements Serializable {
 
     private String consumeTime;
 
-    private Integer serviceMoney;
+    private BigDecimal serviceMoney;
 
-    private Integer totalMoney;
+    private BigDecimal totalMoney;
 
     private Integer partnerUserId;
 
     private Integer payChannel;
 
-    private Integer totalPayableMoney;
+    private BigDecimal totalPayableMoney;
 
-    private Integer realPayableMoney;
+    private BigDecimal realPayableMoney;
 
     private Integer orderStatus;
 
     @Transient
     @JsonIgnore
-    private Integer photoMoney;
+    private BigDecimal photoMoney;
 
     @Transient
     @JsonIgnore
-    private Integer fileMoney;
+    private BigDecimal fileMoney;
 
     @Transient
     @JsonIgnore
@@ -105,29 +105,28 @@ public class UserOrderInfo extends CommandEntity implements Serializable {
         this.consumeTime = format;
     }
 
-    public Integer getServiceMoney() {
-        return serviceMoney;
-    }
-
-    public void setServiceMoney(Integer serviceMoney) {
-        this.serviceMoney = serviceMoney;
-    }
-
-    public Integer getTotalMoney() {
-        return totalMoney;
-    }
-
-    public void setTotalMoney(Integer totalMoney) {
-        this.totalMoney = totalMoney;
-    }
-
-
     public CommodityInfo getCommodityInfo() {
         return commodityInfo;
     }
 
     public void setCommodityInfo(CommodityInfo commodityInfo) {
         this.commodityInfo = commodityInfo;
+    }
+
+    public BigDecimal getServiceMoney() {
+        return serviceMoney;
+    }
+
+    public void setServiceMoney(BigDecimal serviceMoney) {
+        this.serviceMoney = serviceMoney;
+    }
+
+    public BigDecimal getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(BigDecimal totalMoney) {
+        this.totalMoney = totalMoney;
     }
 
     public Integer getPartnerUserId() {
@@ -146,19 +145,19 @@ public class UserOrderInfo extends CommandEntity implements Serializable {
         this.payChannel = payChannel;
     }
 
-    public Integer getTotalPayableMoney() {
+    public BigDecimal getTotalPayableMoney() {
         return totalPayableMoney;
     }
 
-    public void setTotalPayableMoney(Integer totalPayableMoney) {
+    public void setTotalPayableMoney(BigDecimal totalPayableMoney) {
         this.totalPayableMoney = totalPayableMoney;
     }
 
-    public Integer getRealPayableMoney() {
+    public BigDecimal getRealPayableMoney() {
         return realPayableMoney;
     }
 
-    public void setRealPayableMoney(Integer realPayableMoney) {
+    public void setRealPayableMoney(BigDecimal realPayableMoney) {
         this.realPayableMoney = realPayableMoney;
     }
 
@@ -170,19 +169,19 @@ public class UserOrderInfo extends CommandEntity implements Serializable {
         this.orderStatus = orderStatus;
     }
 
-    public Integer getPhotoMoney() {
+    public BigDecimal getPhotoMoney() {
         return photoMoney;
     }
 
-    public void setPhotoMoney(Integer photoMoney) {
+    public void setPhotoMoney(BigDecimal photoMoney) {
         this.photoMoney = photoMoney;
     }
 
-    public Integer getFileMoney() {
+    public BigDecimal getFileMoney() {
         return fileMoney;
     }
 
-    public void setFileMoney(Integer fileMoney) {
+    public void setFileMoney(BigDecimal fileMoney) {
         this.fileMoney = fileMoney;
     }
 

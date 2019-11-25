@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.ginko.driver.api.httpClient.HttpClientUtil;
 import com.ginko.driver.api.md5.Md5Util;
 import com.ginko.driver.api.webSocket.CustomerWebSoket;
+import com.ginko.driver.api.wx.AccessToken;
 import com.ginko.driver.framework.entity.WebSocketReturnType;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.tolls.TokenTools;
@@ -96,6 +97,17 @@ public class PartnerController {
         partnerData.getDataTime().clear();
         partnerData.getPriceData().clear();
         currentPrice = price;
+    }
+
+    @Scheduled(cron = "0 0 0/2 * * ?")
+    public void GetWxToken(){
+        //获取微信授权码
+        AccessToken.wxToken =AccessToken.InitGetWxToken();
+        //获取微信ticket
+        AccessToken.wxTicket= AccessToken.InitgetWxTicket();
+
+        System.out.println(AccessToken.wxToken);
+        System.out.println(AccessToken.wxTicket);
     }
 
     /**
@@ -287,6 +299,8 @@ public class PartnerController {
         return partnerService.buyPartner(userPartner);
     }
 
+
+
     /**
      * 出售的信息
      *
@@ -355,13 +369,18 @@ public class PartnerController {
     /**
      * BSV汇率
      *
-     * @param userPartner
+     * @param Partner
      * @return
      */
     @RequestMapping("/getCnyForBsv")
     public MsgConfig getCnyForBsv(@RequestBody Partner partner) {
-        BigDecimal bsvPrice = partner.getPrice().divide(HttpClientUtil.getCny(), 8, RoundingMode.HALF_UP);
+        BigDecimal bsvPrice = partner.getPrice().divide(HttpClientUtil.bsv, 8, RoundingMode.HALF_UP);
         return new MsgConfig("0", null, bsvPrice);
+    }
+    @Scheduled(cron = "0/30 * * * * ?")
+    public void updateBsvForCny(){
+        HttpClientUtil.bsv = HttpClientUtil.getCny();
+        System.out.println(getNowDateTime()+"价格:"+HttpClientUtil.bsv);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.ginko.driver.framework.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -10,7 +11,7 @@ import java.util.*;
 public class CommodityInfo extends CommandEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int commodityId;
 
     @Column(name = "commodity_number")
@@ -20,7 +21,7 @@ public class CommodityInfo extends CommandEntity implements Serializable {
 
     private String title;
 
-    private Double price;
+    private BigDecimal price;
 
     private String description;
 
@@ -75,11 +76,11 @@ public class CommodityInfo extends CommandEntity implements Serializable {
         this.title = title;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

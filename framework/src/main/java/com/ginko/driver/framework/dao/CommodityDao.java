@@ -29,9 +29,12 @@ public interface CommodityDao extends CrudRepository<CommodityInfo,Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "update commodity SET  price=?2*100 where commodity_number=?1",nativeQuery = true)
-    int updateCommodityPrice(String commodityNumber,int price);
+    @Query(value = "update commodity SET  price=?2 where commodity_number=?1",nativeQuery = true)
+    int updateCommodityPrice(String commodityNumber,BigDecimal price);
 
-
+    @Transactional
+    @Modifying
+    @Query(value = "update commodity SET  user_sell_status=?2 where commodity_number=?1",nativeQuery = true)
+    int updateSellStatus(String commodityNumber,int userSellStatus);
 
 }

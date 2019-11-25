@@ -5,15 +5,19 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "user_income_expenses")
-public class UserIncom {
+public class UserIncome {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int incomeId;
 
     private int description;
 
     private int userId;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @JoinColumn(name="userId",insertable = false,updatable = false,referencedColumnName = "userId")
+    private UserInfo userInfo = new UserInfo();
 
     private BigDecimal money;
 
@@ -39,6 +43,15 @@ public class UserIncom {
     public void setDescription(int description) {
         this.description = description;
     }
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
 
     public int getUserId() {
         return userId;

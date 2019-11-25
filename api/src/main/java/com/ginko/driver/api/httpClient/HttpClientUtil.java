@@ -1,9 +1,8 @@
 package com.ginko.driver.api.httpClient;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.ginko.driver.common.tolls.TokenTools;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -27,10 +26,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: tran
@@ -72,6 +68,37 @@ public class HttpClientUtil {
                 String strResult = EntityUtils.toString(response.getEntity());
                 /**把json字符串转换成json对象**/
                 jsonResult = JSON.parseObject(strResult);
+                try {
+                    url = URLDecoder.decode(url, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                logger.error("get请求提交失败:" + url);
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            logger.error("get请求提交失败:" + url, e);
+        }
+        return jsonResult;
+    }
+
+    public static JSONArray httpGetForArr(String url) {
+
+        //get请求返回结果
+        JSONArray jsonResult = null;
+        try {
+            DefaultHttpClient client = new DefaultHttpClient();
+            //发送get请求
+            HttpGet request = new HttpGet(url);
+            HttpResponse response = client.execute(request);
+            /**请求发送成功，并得到响应**/
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                /**读取服务器返回过来的json字符串数据**/
+                String strResult = EntityUtils.toString(response.getEntity());
+                /**把json字符串转换成json对象**/
+                jsonResult = JSON.parseArray(strResult);
                 try {
                     url = URLDecoder.decode(url, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
@@ -151,7 +178,6 @@ public class HttpClientUtil {
      * get
      *
      * @param url 请求地址
-     * @param par 请求参数
      * @return
      */
     public static JSON httpGet(String url, String key) {
@@ -220,23 +246,53 @@ public class HttpClientUtil {
 
     }
 
+
+
+    public static BigDecimal bsv = new BigDecimal("0.00");
+
     /**
      * 获取BSV对人民币汇率
      * @return
      */
     public static BigDecimal getCny(){
-        JSON j = httpGet("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny");
+//        JSON j = httpGet("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny");
 //        Double cny = ((JSONObject) j).getJSONObject("bitcoin-cash-sv").getDouble("cny");
-         Double cny= 800.00;
-        return new BigDecimal(cny);
+         JSONArray j = httpGetForArr("https://fxhapi.feixiaohao.com/public/v1/ticker?convert=cny");
+         BigDecimal cny= new BigDecimal("0.00");
+         for (int i =0;i<j.size();i++){
+             JSONObject json = (JSONObject) j.get(i);
+             String type=json.getString("symbol");
+             if (type.equals("BSV")){
+                 cny = json.getBigDecimal("price_cny");
+             }
+         }
+        return cny;
     }
 
+    /**
+     * 获取BSV对人民币汇率
+     * @return
+     */
+    public static JSON getWxToken(){
+        JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx5dda56cc3e7b8ee9&secret=37f640af8ceaa2d1301b45f036c4ffd4");
+//        Double cny = ((JSONObject) j).getJSONObject("bitcoin-cash-sv").getDouble("cny");
+        return j;
+    }
+
+    public static JSON getWxTicket(String token){
+        JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+token+"&type=jsapi");
+//        JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=27_0PogUQjh33zOb1hARTbmWOrjRPZdOnF-LuE9Tv_mx4e2yIe8jVObqqRyeI5hFdK0w9fv9mUQwWqQKxxMgMdG6FUNGEoDVYCTM4rwRDh2FBshSXdnYj6mnEN2Oyt4hOh4r6kkuF6_Wq0GV095SYQaADAZFX&type=jsapi");
+
+        return j;
+    }
     public static void main(String[] args) {
-        //https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny --人民币兑换BSV
-        String json = "{\"orderId\":\"7224dcb1006845f5b2f547249dea24a\"}";
-        String url = "https://www.timesv.com/sv/order/v1/wechat/qrcode/generate";
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzQyOTk1ODQsImlhdCI6MTU3MzY5NDc4NCwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjMxfX0.pE0FkgHYS1_Cc_ZYyAaCy8UgOCA4Hccn5pyuvXJX76Wa93LsQg3g6GrLXD2hPk0VeXaP_yQUPJFLbZUBtjTs2VghXwlbqylxLnL8t_xFlV2CdRrPmqWtAucQr5eRBlcjSfeC-yLQSFLFy0kMJxfNy3xTSUF9t8iTY_3pfyRc_xqZZnBVKwT-gSH14SbtKj_RNm4wdDoxC4-gwdFbPUUSFsHJHdIWP8TsDRyfJ0dDNV2t_eSsI3XXVi8cKLoVobPASKesDzwiEEKPYDcTUZE7BOJBMY8xSdgwWpE2aLrun8KNxfFMpx5f2w_6hnrYp9WQmJwfvjMx4K-KlOvuJ1e_kg";
-        JSON J = httpPost(url,json,token);
-        System.out.println(J);
+    /*    System.out.println(StringUtils.endsWith(
+                "jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"
+                ,
+                "jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"));
+        System.out.println(Md5Util.encode("jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"));
+        System.out.println(new Date().getTime());
+        System.out.println(System.currentTimeMillis()/1000);*/
+        System.out.println(getCny());
     }
 }

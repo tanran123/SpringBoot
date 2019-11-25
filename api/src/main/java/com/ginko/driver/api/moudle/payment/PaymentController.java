@@ -1,5 +1,6 @@
 package com.ginko.driver.api.moudle.payment;
 
+import com.ginko.driver.api.httpClient.HttpClientUtil;
 import com.ginko.driver.api.webSocket.CustomerWebSoket;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.framework.entity.WebSocketReturnType;
@@ -32,5 +33,10 @@ public class PaymentController {
             e.printStackTrace();
         }
         return new MsgConfig("0","success",null);
+    }
+
+    @RequestMapping(value = "/getWxToken")
+    public MsgConfig getWxToken(){
+        return new MsgConfig("0","",HttpClientUtil.getWxToken());
     }
 }

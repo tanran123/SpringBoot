@@ -16,7 +16,7 @@ import java.util.Date;
 @Table(name = "commodity_file")
 public class CommodityFile implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String collectTime;

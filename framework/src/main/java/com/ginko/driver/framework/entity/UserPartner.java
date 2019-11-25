@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Table(name = "user_partner")
 public class UserPartner extends CommandEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int userId;
     private int partnerId;

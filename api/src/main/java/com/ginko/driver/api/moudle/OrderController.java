@@ -86,4 +86,20 @@ public class OrderController {
 
         return new MsgConfig("0",null,commodityService.updateCommodityPrice(commodityInfo));
     }
+
+    @RequestMapping("/updateSellStatus")
+    public MsgConfig updateSellStatus(@RequestBody CommodityInfo commodityInfo, HttpServletRequest request){
+        try {
+            Integer userId = TokenTools.getUserIdFromToken(request.getHeader("Authorization"));
+            if (userId!=commodityInfo.getUserId()){
+                return new MsgConfig("401","权限不足",null);
+            }
+            commodityInfo.setUserId(userId);
+        }
+        catch (Exception e){
+            return new MsgConfig("401","权限不足",null);
+        }
+
+        return new MsgConfig("0",null,commodityService.updateSellStatus(commodityInfo));
+    }
 }
