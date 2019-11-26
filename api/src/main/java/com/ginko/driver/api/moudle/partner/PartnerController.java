@@ -105,7 +105,6 @@ public class PartnerController {
         AccessToken.wxToken =AccessToken.InitGetWxToken();
         //获取微信ticket
         AccessToken.wxTicket= AccessToken.InitgetWxTicket();
-
         System.out.println(AccessToken.wxToken);
         System.out.println(AccessToken.wxTicket);
     }

@@ -29,7 +29,7 @@ public class UserOrderInfo extends CommandEntity implements Serializable {
 
     private BigDecimal serviceMoney;
 
-    private BigDecimal totalMoney;
+    private BigDecimal totalPayableMoneyWithServiceFee;
 
     private Integer partnerUserId;
 
@@ -121,12 +121,12 @@ public class UserOrderInfo extends CommandEntity implements Serializable {
         this.serviceMoney = serviceMoney;
     }
 
-    public BigDecimal getTotalMoney() {
-        return totalMoney;
+    public BigDecimal getTotalPayableMoneyWithServiceFee() {
+        return totalPayableMoneyWithServiceFee;
     }
 
-    public void setTotalMoney(BigDecimal totalMoney) {
-        this.totalMoney = totalMoney;
+    public void setTotalPayableMoneyWithServiceFee(BigDecimal totalPayableMoneyWithServiceFee) {
+        this.totalPayableMoneyWithServiceFee = totalPayableMoneyWithServiceFee;
     }
 
     public Integer getPartnerUserId() {
