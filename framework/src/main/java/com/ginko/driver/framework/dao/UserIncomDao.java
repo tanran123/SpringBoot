@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserIncomDao extends CrudRepository<UserIncome, Long> {
+
     UserIncome save(UserIncome userIncome);
 
     List<UserIncome> findByUserId(int userId);
@@ -23,7 +24,7 @@ public interface UserIncomDao extends CrudRepository<UserIncome, Long> {
             "\tuser_income_expenses ui\n" +
             "\tINNER JOIN `user` us on us.user_id = ui.user_id\n" +
             "WHERE\n" +
-            "\tdescription = 3 \n" +
+            "\tdescription = 4 \n" +
             "GROUP BY\n" +
             "\tuser_id \n" +
             "ORDER BY\n" +

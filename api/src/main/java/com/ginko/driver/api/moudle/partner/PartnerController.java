@@ -99,7 +99,7 @@ public class PartnerController {
         currentPrice = price;
     }
 
-    @Scheduled(cron = "0 0 0/2 * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void GetWxToken(){
         //获取微信授权码
         AccessToken.wxToken =AccessToken.InitGetWxToken();

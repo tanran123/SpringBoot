@@ -3,6 +3,7 @@ package com.ginko.driver.api.httpClient;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ginko.driver.api.wx.AccessToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -285,6 +287,14 @@ public class HttpClientUtil {
 
         return j;
     }
+
+    public static JSONObject getWxInfo(String openId){
+        JSONObject j = httpGet("https://api.weixin.qq.com/cgi-bin/user/info?access_token="+ AccessToken.wxToken +"&openid="+openId+"&lang=zh_CN");
+        return j;
+    }
+
+
+
     public static void main(String[] args) {
     /*    System.out.println(StringUtils.endsWith(
                 "jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"
@@ -293,6 +303,10 @@ public class HttpClientUtil {
         System.out.println(Md5Util.encode("jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"));
         System.out.println(new Date().getTime());
         System.out.println(System.currentTimeMillis()/1000);*/
-        System.out.println(getCny());
+        try {
+            System.out.println(URLEncoder.encode("https://www.timesv.com/register?inviteCode=1","utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,19 +2,21 @@ package com.ginko.driver.framework.service;
 
 import com.ginko.driver.framework.dao.UserIncomDao;
 import com.ginko.driver.framework.entity.UserIncome;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-
+/**
+ * @Auther: tran
+ * @Date: 2019/11/26
+ * @Description:
+ */
 @Service
-public class UserService {
+public class UserIncomeService {
     @Autowired
-    private UserIncomDao incomDao;
+    private UserIncomDao userIncomDao;
 
-    public List<Map<String,Object>> getUserIncomeTop() {
-      return incomDao.findByRegisterTop();
+    public UserIncome addIncome(UserIncome userIncome){
+        return null;
     }
+
 }
