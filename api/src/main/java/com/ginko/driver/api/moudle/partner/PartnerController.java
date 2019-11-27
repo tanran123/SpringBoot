@@ -86,7 +86,8 @@ public class PartnerController {
         Partner partnerQuery = partnerService.findByPartnerDay(getNowDate(1));
         if (partnerQuery==null){
             Partner partner = addPartner(1);
-            addUserPartner(partner);
+            Partner partnerQuery1 = partnerService.findByPartnerDay(getNowDate(1));
+            addUserPartner(partnerQuery1);
         }
     }
 
