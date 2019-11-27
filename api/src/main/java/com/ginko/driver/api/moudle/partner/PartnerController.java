@@ -116,10 +116,6 @@ public class PartnerController {
      */
     @RequestMapping(value = "/getAllPrice")
     public MsgConfig getAllPrice() {
-        //如果今日合伙人为空
-        if (partnerService.findByPartnerDay(getNowDate(0)) == null) {
-            addPartner(0);
-        }
         partnerData.view();
         addPrice();
         partnerService.updatePartnerViewCount(getNowDate(0));
@@ -160,9 +156,6 @@ public class PartnerController {
             StringBuffer stringBuffer = new StringBuffer("");
             StringBuffer stringBufferHour = new StringBuffer("");
             /*将之前T-1小时的数据写入partnerData*/
-            if ((hour==0)){
-
-            }
             for (int i = 0; i < hour; i++) {
                 stringBufferHour.setLength(0);
                 stringBufferHour.append(i < 10 ? "0" + String.valueOf(i) : String.valueOf(i));
