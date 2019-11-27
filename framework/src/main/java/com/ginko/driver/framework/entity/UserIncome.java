@@ -15,9 +15,6 @@ public class UserIncome {
 
     private int userId;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinColumn(name="userId",insertable = false,updatable = false,referencedColumnName = "userId")
-    private UserInfo userInfo = new UserInfo();
 
     private BigDecimal money;
 
@@ -43,15 +40,6 @@ public class UserIncome {
     public void setDescription(int description) {
         this.description = description;
     }
-
-    public UserInfo getUserInfo() {
-        return userInfo;
-    }
-
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
-    }
-
 
     public int getUserId() {
         return userId;

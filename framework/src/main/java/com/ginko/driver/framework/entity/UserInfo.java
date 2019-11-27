@@ -24,8 +24,7 @@ public class UserInfo extends CommandEntity implements Serializable {
     private String nickName;
 
 
-    @Transient
-    @JsonIgnore
+
     private String phone;
 
 
@@ -91,12 +90,10 @@ public class UserInfo extends CommandEntity implements Serializable {
     @JsonIgnore
     private String weixinAppUserId;
 
-    @Transient
-    @JsonIgnore
+
     private BigDecimal balance;
 
-    @Transient
-    @JsonIgnore
+
     private String privateKey;
 
     @Transient
@@ -115,15 +112,25 @@ public class UserInfo extends CommandEntity implements Serializable {
     @JsonIgnore
     private int userStatus;
 
-    @Transient
-    @JsonIgnore
     private String inviteCode;
 
-    @Transient
-    @JsonIgnore
     private BigDecimal bsvBalance;
 
+    @JsonIgnore
     private String wxOpenId;
+
+    private String wxHeadImgUrl;
+
+    @Transient
+    private String code;
+
+    public String getWxHeadImgUrl() {
+        return wxHeadImgUrl;
+    }
+
+    public void setWxHeadImgUrl(String wxHeadImgUrl) {
+        this.wxHeadImgUrl = wxHeadImgUrl;
+    }
 
     public int getUserId() {
         return userId;
@@ -359,5 +366,13 @@ public class UserInfo extends CommandEntity implements Serializable {
 
     public void setWxOpenId(String wxOpenId) {
         this.wxOpenId = wxOpenId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

@@ -281,6 +281,11 @@ public class HttpClientUtil {
         return j;
     }
 
+    /**
+     * 获取微信ticket
+     * @param token
+     * @return
+     */
     public static JSON getWxTicket(String token){
         JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+token+"&type=jsapi");
 //        JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=27_0PogUQjh33zOb1hARTbmWOrjRPZdOnF-LuE9Tv_mx4e2yIe8jVObqqRyeI5hFdK0w9fv9mUQwWqQKxxMgMdG6FUNGEoDVYCTM4rwRDh2FBshSXdnYj6mnEN2Oyt4hOh4r6kkuF6_Wq0GV095SYQaADAZFX&type=jsapi");
@@ -288,8 +293,23 @@ public class HttpClientUtil {
         return j;
     }
 
+    /**
+     * 通过openId获取用户详情
+     * @param openId
+     * @return
+     */
     public static JSONObject getWxInfo(String openId){
         JSONObject j = httpGet("https://api.weixin.qq.com/cgi-bin/user/info?access_token="+ AccessToken.wxToken +"&openid="+openId+"&lang=zh_CN");
+        return j;
+    }
+
+    /**
+     * 通过CODE获取token和用户openid
+     * @param code
+     * @return
+     */
+    public static JSONObject getWxUserInfoTokenAndOpenId(String code){
+        JSONObject j = httpGet("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx5dda56cc3e7b8ee9&secret=37f640af8ceaa2d1301b45f036c4ffd4&code="+code+"&grant_type=authorization_code");
         return j;
     }
 
