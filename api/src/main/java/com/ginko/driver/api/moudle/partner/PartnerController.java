@@ -85,7 +85,7 @@ public class PartnerController {
         //添加明日合伙人记录
         Partner partnerQuery = partnerService.findByPartnerDay(getNowDate(1));
         if (partnerQuery==null){
-            Partner partner = addPartner(1);
+            addPartner(1);
             Partner partnerQuery1 = partnerService.findByPartnerDay(getNowDate(1));
             addUserPartner(partnerQuery1);
         }
@@ -119,8 +119,15 @@ public class PartnerController {
     public MsgConfig getAllPrice() {
         partnerData.view();
         addPrice();
-        partnerService.updatePartnerViewCount(getNowDate(0));
+        /*partnerService.updatePartnerViewCount(getNowDate(0));*/
         return new MsgConfig("0", null, partnerData);
+    }
+
+
+    @RequestMapping(value = "/addViewCount")
+    public MsgConfig addViewCount() {
+        partnerService.updatePartnerViewCount(getNowDate(0));
+        return new MsgConfig("0", "ok", null);
     }
 
     /**
@@ -370,6 +377,8 @@ public class PartnerController {
         BigDecimal bsvPrice = partner.getPrice().divide(HttpClientUtil.bsv, 8, RoundingMode.HALF_UP);
         return new MsgConfig("0", null, bsvPrice);
     }
+
+    
     @Scheduled(cron = "0/30 * * * * ?")
     public void updateBsvForCny(){
         HttpClientUtil.bsv = HttpClientUtil.getCny();

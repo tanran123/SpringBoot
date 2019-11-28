@@ -13,8 +13,10 @@ public class InitConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+/*
         AccessToken.wxToken = "27_vbdcqQgWvD5hAAvYSYwaDoHBTOhOx59WhMh8GsC47_dxL-L0r7th94cP-LWVqMFwgpciC5pU6WqQprmeaSc2KV2wGLxcHUxAJ6MzdYTAzIeKgs4itdpFHWsPh3IMARgAEAWKB";
-       /* AccessToken.wxToken = AccessToken.InitGetWxToken();*/
+*/
+        AccessToken.wxToken = AccessToken.InitGetWxToken();
         AccessToken.wxTicket = AccessToken.InitgetWxTicket();
         HttpClientUtil.bsv = HttpClientUtil.getCny();
         System.out.println(HttpClientUtil.bsv);

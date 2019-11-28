@@ -94,7 +94,7 @@ public class UserController {
         if (openId!=null){
             UserInfo userInfoQuery = userService.findByOpenId(userInfo);
             if (userInfoQuery==null){
-                return new MsgConfig("102","用户未注册",userInfo.getCode());
+                return new MsgConfig("102","用户未注册",openId);
             }
             else{
                 return new MsgConfig("101","OK",userInfoQuery);
