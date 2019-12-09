@@ -6,6 +6,7 @@ import com.ginko.driver.api.wx.WxConfig;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.tolls.TokenTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +35,15 @@ public class WxController {
         wxConfig.setSignature(sh1);
         wxConfig.setNoncestr(noncestr);
         return new MsgConfig("0","ok",wxConfig);
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    public void GetWxToken(){
+        //获取微信授权码
+        AccessToken.wxToken =AccessToken.InitGetWxToken();
+        //获取微信ticket
+        AccessToken.wxTicket= AccessToken.InitgetWxTicket();
+        System.out.println(AccessToken.wxToken);
+        System.out.println(AccessToken.wxTicket);
     }
 }

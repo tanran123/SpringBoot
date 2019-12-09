@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public int updateWxInfo(UserInfo userInfo){
-        return userInfoDao.updateUserOpenIdAndHeadURLAndNickName(userInfo.getUserId(),userInfo.getWxOpenId(),
+        return userInfoDao.updateUserOpenIdAndHeadURLAndNickName(userInfo.getUserId(),userInfo.getOpenId(),
                 userInfo.getWxHeadImgUrl(),userInfo.getNickName());
     }
 

@@ -19,12 +19,12 @@ public interface UserIncomDao extends CrudRepository<UserIncome, Long> {
             "  ui.user_id,\n" +
             "\tSUM( bsv_count ) AS bsv_count,\n" +
             "\tus.nick_name,\n" +
-            "  us.wx_open_id\n" +
+            "\tus.wx_head_img_url\n" +
             "FROM\n" +
             "\tuser_income_expenses ui\n" +
             "\tINNER JOIN `user` us on us.user_id = ui.user_id\n" +
             "WHERE\n" +
-            "\tdescription = 4 \n" +
+            "\tdescription = 3 \n" +
             "GROUP BY\n" +
             "\tuser_id \n" +
             "ORDER BY\n" +

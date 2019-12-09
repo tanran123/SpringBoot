@@ -59,15 +59,20 @@ public class HttpClientUtil {
 
         //get请求返回结果
         JSONObject jsonResult = null;
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        //发送get请求
+        HttpGet request = new HttpGet(url);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(5000)
+                .setSocketTimeout(5000).build();
+        request.setConfig(requestConfig);
+        CloseableHttpResponse response = null;
         try {
-            DefaultHttpClient client = new DefaultHttpClient();
-            //发送get请求
-            HttpGet request = new HttpGet(url);
-            HttpResponse response = client.execute(request);
+            response = httpClient.execute(request);
             /**请求发送成功，并得到响应**/
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 /**读取服务器返回过来的json字符串数据**/
-                String strResult = EntityUtils.toString(response.getEntity());
+                String strResult = EntityUtils.toString(response.getEntity(), "UTF-8");
                 /**把json字符串转换成json对象**/
                 jsonResult = JSON.parseObject(strResult);
                 try {
@@ -82,6 +87,74 @@ public class HttpClientUtil {
             e.printStackTrace();
         } catch (IOException e) {
             logger.error("get请求提交失败:" + url, e);
+        } finally {
+            //关闭所有资源连接
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return jsonResult;
+    }
+
+    public static JSON httpGetForJSON(String url) {
+
+        //get请求返回结果
+        JSON jsonResult = null;
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        //发送get请求
+        HttpGet request = new HttpGet(url);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(5000)
+                .setSocketTimeout(5000).build();
+        request.setConfig(requestConfig);
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(request);
+            /**请求发送成功，并得到响应**/
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                /**读取服务器返回过来的json字符串数据**/
+                String strResult = EntityUtils.toString(response.getEntity(), "UTF-8");
+                /**把json字符串转换成json对象**/
+                jsonResult = JSON.parseObject(strResult);
+                try {
+                    url = URLDecoder.decode(url, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                logger.error("get请求提交失败:" + url);
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            logger.error("get请求提交失败:" + url, e);
+        } finally {
+            //关闭所有资源连接
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return jsonResult;
     }
@@ -90,11 +163,16 @@ public class HttpClientUtil {
 
         //get请求返回结果
         JSONArray jsonResult = null;
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        //发送get请求
+        HttpGet request = new HttpGet(url);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(5000)
+                .setSocketTimeout(5000).build();
+        request.setConfig(requestConfig);
+        CloseableHttpResponse response = null;
         try {
-            DefaultHttpClient client = new DefaultHttpClient();
-            //发送get请求
-            HttpGet request = new HttpGet(url);
-            HttpResponse response = client.execute(request);
+            response = httpClient.execute(request);
             /**请求发送成功，并得到响应**/
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 /**读取服务器返回过来的json字符串数据**/
@@ -113,6 +191,22 @@ public class HttpClientUtil {
             e.printStackTrace();
         } catch (IOException e) {
             logger.error("get请求提交失败:" + url, e);
+        } finally {
+            //关闭所有资源连接
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return jsonResult;
     }
@@ -124,8 +218,8 @@ public class HttpClientUtil {
      * @param jsonParam 参数
      * @return
      */
-    public static JSON httpPost(String url, String jsonParam,String token) {
-        return httpPost(url, jsonParam,token, false);
+    public static JSON httpPost(String url, String jsonParam, String token) {
+        return httpPost(url, jsonParam, token, false);
     }
 
     /**
@@ -136,15 +230,20 @@ public class HttpClientUtil {
      * @param noNeedResponse 不需要返回结果
      * @return
      */
-    public static JSON httpPost(String url, String jsonParam,String token, boolean noNeedResponse) {
+    public static JSON httpPost(String url, String jsonParam, String token, boolean noNeedResponse) {
 
         //post请求返回结果
-        DefaultHttpClient httpClient = new DefaultHttpClient();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
         JSON jsonResult = null;
         HttpPost method = new HttpPost(url);
       /*  String token1 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzQyOTk1ODQsImlhdCI6MTU3MzY5NDc4NCwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjMxfX0.pE0FkgHYS1_Cc_ZYyAaCy8UgOCA4Hccn5pyuvXJX76Wa93LsQg3g6GrLXD2hPk0VeXaP_yQUPJFLbZUBtjTs2VghXwlbqylxLnL8t_xFlV2CdRrPmqWtAucQr5eRBlcjSfeC-yLQSFLFy0kMJxfNy3xTSUF9t8iTY_3pfyRc_xqZZnBVKwT-gSH14SbtKj_RNm4wdDoxC4-gwdFbPUUSFsHJHdIWP8TsDRyfJ0dDNV2t_eSsI3XXVi8cKLoVobPASKesDzwiEEKPYDcTUZE7BOJBMY8xSdgwWpE2aLrun8KNxfFMpx5f2w_6hnrYp9WQmJwfvjMx4K-KlOvuJ1e_kg";
         method.setHeader("Authorization", token1);*/
-        method.setHeader("Authorization",token);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(5000)
+                .setSocketTimeout(5000).build();
+        method.setConfig(requestConfig);
+        method.setHeader("Authorization", token);
+        CloseableHttpResponse result = null;
         try {
             if (null != jsonParam) {
                 //解决中文乱码问题
@@ -153,7 +252,7 @@ public class HttpClientUtil {
                 entity.setContentType("application/json");
                 method.setEntity(entity);
             }
-            HttpResponse result = httpClient.execute(method);
+            result = httpClient.execute(method);
             url = URLDecoder.decode(url, "UTF-8");
             /**请求发送成功，并得到响应**/
             if (result.getStatusLine().getStatusCode() == 200) {
@@ -172,6 +271,22 @@ public class HttpClientUtil {
             }
         } catch (IOException e) {
             logger.error("post请求提交失败:" + url, e);
+        } finally {
+            //关闭所有资源连接
+            if (result != null) {
+                try {
+                    result.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return jsonResult;
     }
@@ -249,33 +364,34 @@ public class HttpClientUtil {
     }
 
 
-
     public static BigDecimal bsv = new BigDecimal("0.00");
 
     /**
      * 获取BSV对人民币汇率
+     *
      * @return
      */
-    public static BigDecimal getCny(){
+    public static BigDecimal getCny() {
 //        JSON j = httpGet("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny");
 //        Double cny = ((JSONObject) j).getJSONObject("bitcoin-cash-sv").getDouble("cny");
-         JSONArray j = httpGetForArr("https://fxhapi.feixiaohao.com/public/v1/ticker?convert=cny");
-         BigDecimal cny= new BigDecimal("0.00");
-         for (int i =0;i<j.size();i++){
-             JSONObject json = (JSONObject) j.get(i);
-             String type=json.getString("symbol");
-             if (type.equals("BSV")){
-                 cny = json.getBigDecimal("price_cny");
-             }
-         }
+        JSONArray j = httpGetForArr("https://fxhapi.feixiaohao.com/public/v1/ticker?convert=cny");
+        BigDecimal cny = new BigDecimal("0.00");
+        for (int i = 0; i < j.size(); i++) {
+            JSONObject json = (JSONObject) j.get(i);
+            String type = json.getString("symbol");
+            if (type.equals("BSV")) {
+                cny = json.getBigDecimal("price_cny");
+            }
+        }
         return cny;
     }
 
     /**
      * 获取BSV对人民币汇率
+     *
      * @return
      */
-    public static JSON getWxToken(){
+    public static JSON getWxToken() {
         JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx5dda56cc3e7b8ee9&secret=37f640af8ceaa2d1301b45f036c4ffd4");
 //        Double cny = ((JSONObject) j).getJSONObject("bitcoin-cash-sv").getDouble("cny");
         return j;
@@ -283,11 +399,12 @@ public class HttpClientUtil {
 
     /**
      * 获取微信ticket
+     *
      * @param token
      * @return
      */
-    public static JSON getWxTicket(String token){
-        JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+token+"&type=jsapi");
+    public static JSON getWxTicket(String token) {
+        JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + token + "&type=jsapi");
 //        JSON j = httpGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=27_0PogUQjh33zOb1hARTbmWOrjRPZdOnF-LuE9Tv_mx4e2yIe8jVObqqRyeI5hFdK0w9fv9mUQwWqQKxxMgMdG6FUNGEoDVYCTM4rwRDh2FBshSXdnYj6mnEN2Oyt4hOh4r6kkuF6_Wq0GV095SYQaADAZFX&type=jsapi");
 
         return j;
@@ -295,24 +412,25 @@ public class HttpClientUtil {
 
     /**
      * 通过openId获取用户详情
+     *
      * @param openId
      * @return
      */
-    public static JSONObject getWxInfo(String openId){
-        JSONObject j = httpGet("https://api.weixin.qq.com/cgi-bin/user/info?access_token="+ AccessToken.wxToken +"&openid="+openId+"&lang=zh_CN");
+    public static JSONObject getWxInfo(String openId) {
+        JSONObject j = httpGet("https://api.weixin.qq.com/cgi-bin/user/info?access_token=" + AccessToken.wxToken + "&openid=" + openId + "&lang=zh_CN");
         return j;
     }
 
     /**
      * 通过CODE获取token和用户openid
+     *
      * @param code
      * @return
      */
-    public static JSONObject getWxUserInfoTokenAndOpenId(String code){
-        JSONObject j = httpGet("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx5dda56cc3e7b8ee9&secret=37f640af8ceaa2d1301b45f036c4ffd4&code="+code+"&grant_type=authorization_code");
+    public static JSONObject getWxUserInfoTokenAndOpenId(String code) {
+        JSONObject j = httpGet("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx5dda56cc3e7b8ee9&secret=37f640af8ceaa2d1301b45f036c4ffd4&code=" + code + "&grant_type=authorization_code");
         return j;
     }
-
 
 
     public static void main(String[] args) {
@@ -323,10 +441,13 @@ public class HttpClientUtil {
         System.out.println(Md5Util.encode("jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"));
         System.out.println(new Date().getTime());
         System.out.println(System.currentTimeMillis()/1000);*/
-        try {
-            System.out.println(URLEncoder.encode("https://www.timesv.com/register?inviteCode=1","utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            System.out.println(URLEncoder.encode("https://www.timesv.com/register?inviteCode=1","utf-8"));
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+
+        JSONObject J = (JSONObject) httpPost("https://www.timesv.com/timesv/user/v1/wechat/bind/status", "{\"openId\":\"123\"}", "123");
+        System.out.println(J);
     }
 }

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,22 +30,7 @@ public class UserController {
     @RequestMapping("/getIncomeTop")
     public MsgConfig getIncomeTop(){
         List<Map<String,Object>> list =  userService.getUserIncomeTop();
-        List<Map<String,Object>> list1 = new ArrayList<>();
-        for (Map<String,Object> map :list){
-            if (map.get("wx_open_id")!=null){
-                Map<String,Object> mapNew = new HashMap<>();
-                JSONObject jsonObject = HttpClientUtil.getWxInfo(map.get("wx_open_id").toString());
-                mapNew.putAll(map);
-                mapNew.remove("wx_open_id");
-                mapNew.put("headImg",jsonObject.getString("headimgurl"));
-                mapNew.put("wxName",jsonObject.getString("nickname"));
-                list1.add(mapNew);
-            }
-            else{
-                list1.add(map);
-            }
-        }
-        return new MsgConfig("0",null,list1);
+        return new MsgConfig("0",null,list);
     }
 
     /**
@@ -64,15 +51,9 @@ public class UserController {
         catch (Exception e){
             return new MsgConfig("401","权限不足",null);
         }
-        JSONObject jsonpObject = HttpClientUtil.getWxUserInfoTokenAndOpenId(userInfo.getCode());
-        String openId = jsonpObject.getString("openid");
+        String openId =userInfo.getOpenId();
         if (openId!=null){
-            JSONObject wxUserInfo = HttpClientUtil.getWxInfo(openId);
-            String nickName = wxUserInfo.getString("nickname");
-            String headUrl = wxUserInfo.getString("headimgurl");
-            userInfo.setWxHeadImgUrl(headUrl);
-            userInfo.setWxOpenId(openId);
-            userInfo.setNickName(nickName);
+            System.out.println(userInfo.getOpenId());
             userService.updateWxInfo(userInfo);
             return new MsgConfig("0","ok",userInfo);
         }
@@ -92,16 +73,28 @@ public class UserController {
         String openId = jsonpObject.getString("openid");
         userInfo.setWxOpenId(openId);
         if (openId!=null){
-            UserInfo userInfoQuery = userService.findByOpenId(userInfo);
-            if (userInfoQuery==null){
-                return new MsgConfig("102","用户未注册",openId);
+            JSONObject json = (JSONObject)HttpClientUtil.httpPost("https://www.timesv.com/timesv/user/v1/wechat/bind/status","{\"openId\":\""+openId+"\"}","123");
+            if (json.getInteger("responseCode")==210){
+                String token = jsonpObject.getString("access_token");
+                JSON jsonInfo = HttpClientUtil.httpGetForJSON("https://api.weixin.qq.com/sns/userinfo?access_token="+token+"&openid="+openId+"&lang=zh_CN");
+                System.out.println("--------------------------\n"+jsonInfo+"\n--------------------------\n");
+                return new MsgConfig("102","用户未注册",jsonInfo);
+            }
+            else if (json.getInteger("responseCode")==0){
+                return new MsgConfig("101","OK",json.getJSONObject("data"));
             }
             else{
-                return new MsgConfig("101","OK",userInfoQuery);
+                return new MsgConfig("102","用户未注册",openId);
             }
         }
         else{
             return new MsgConfig("103","微信授权失败",null);
         }
+    }
+
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        String url = "{\"country\":\"\",\"province\":\"\",\"city\":\"\",\"openid\":\"ojabuwxtLiO5uarde57Umx1uzu1g\",\"sex\":1,\"nickname\":\"è°\u00ADç\\u0084¶\",\"headimgurl\":\"http://thirdwx.qlogo.cn/mmopen/vi_32/8m96uYNX9WfhN9hicLe24VCgN5EE1ypx97aLXicD5DSkQIVzjjz87C69cpCx2MgUHzdwzQZVGKmAHNPibAXBHmicsg/132\",\"language\":\"zh_CN\",\"privilege\":[]}";
+        System.out.println(  URLEncoder.encode("è°\u00ADç\\u0084¶","utf-8"));
+
     }
 }

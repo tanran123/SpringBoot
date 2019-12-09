@@ -51,10 +51,12 @@ public class PartnerController {
      */
     @Scheduled(cron = "0 0/5 * * * ?")
     public void getPartnerPrice() {
+        System.out.println("-----------------添加数据-----------------");
+
         if (partnerData.getPriceData().size() == 0) {
             addPrice();
         } else {
-            BigDecimal cny = HttpClientUtil.getCny();
+            BigDecimal cny = HttpClientUtil.bsv;
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int min = calendar.get(Calendar.MINUTE);
@@ -75,6 +77,7 @@ public class PartnerController {
             partnerData.getPriceData().add(currentPrice);       //写入当前现金价格
             partnerData.getBsvPriceData().add(bsvCurrentPrice);    //写入当前BSV价格
         }
+        System.out.println("-------------------结束-----------------------");
     }
 
     /**
@@ -98,16 +101,6 @@ public class PartnerController {
         partnerData.getDataTime().clear();
         partnerData.getPriceData().clear();
         currentPrice = price;
-    }
-
-    @Scheduled(cron = "0 0/30 * * * ?")
-    public void GetWxToken(){
-        //获取微信授权码
-        AccessToken.wxToken =AccessToken.InitGetWxToken();
-        //获取微信ticket
-        AccessToken.wxTicket= AccessToken.InitgetWxTicket();
-        System.out.println(AccessToken.wxToken);
-        System.out.println(AccessToken.wxTicket);
     }
 
     /**
@@ -136,11 +129,24 @@ public class PartnerController {
      * @return
      */
     @RequestMapping(value = "/getTodayPartner")
-    public MsgConfig getTodayPartner(HttpServletRequest request) {
-        Integer userId = TokenTools.getUserIdFromToken(request.getHeader("Authorization"));
+    public MsgConfig getTodayPartner() {
         //如果今日合伙人为空
         Partner partner = partnerService.findByPartnerDay(getNowDate(0));
         return new MsgConfig("0", null, partner);
+    }
+
+    /**
+     * 获取Datepartner
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getPartnerForDate")
+    public MsgConfig getPartnerForDate(@RequestBody Partner partnerq) {
+        //如果今日合伙人为空
+        Partner partner = partnerService.findByPartnerDay(partnerq.getPartnerDay());
+        List<Partner> partners = new ArrayList<>();
+        partners.add(partner);
+        return new MsgConfig("0", null, partners);
     }
 
 
@@ -156,7 +162,7 @@ public class PartnerController {
 
     public static void addPrice() {
         //获取BSV价格
-        BigDecimal cny = HttpClientUtil.getCny();
+        BigDecimal cny =HttpClientUtil.bsv;
         if (partnerData.getPriceData().size() == 0) {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -235,7 +241,7 @@ public class PartnerController {
 
     public Partner addPartner(int add) {
         //获取BSV价格
-        BigDecimal cny = HttpClientUtil.getCny();
+        BigDecimal cny = HttpClientUtil.bsv;
         Partner partner = new Partner();
         partner.setPartnerDay(getNowDate(add));
         partner.setPartnerNation("");
@@ -294,7 +300,7 @@ public class PartnerController {
     @RequestMapping("/buyPartner")
     public MsgConfig buyPartner(@RequestBody UserPartner userPartner) {
         Partner partner = partnerService.findByPartnerId(userPartner.getPartnerId());
-        userPartner.setBuyPrice(partner.getPrice());
+        userPartner.setBuyPrice(partner.getPrice().multiply(new BigDecimal("1.1")));
         userPartner.setBuyBsvPrice(partner.getBsvPrice());
         return partnerService.buyPartner(userPartner);
     }
@@ -326,7 +332,7 @@ public class PartnerController {
 
     @RequestMapping("/updatePartnerSellStatus")
     public MsgConfig updatePartnerSellStatus(@RequestBody Partner partner) {
-        BigDecimal cny = HttpClientUtil.getCny();
+        BigDecimal cny = HttpClientUtil.bsv;
         partner.setBsvPrice(partner.getPrice().divide(cny, 8, RoundingMode.HALF_UP));
         return new MsgConfig("0", null,
                 partnerService.updatePartnerSellStatusAndPrice(partner.getSellStatus(), partner.getPrice(), partner.getPartnerId(), partner.getBsvPrice()));
@@ -381,8 +387,10 @@ public class PartnerController {
     
     @Scheduled(cron = "0/30 * * * * ?")
     public void updateBsvForCny(){
+        System.out.println("-----------------BSV价格获取开始-----------------");
         HttpClientUtil.bsv = HttpClientUtil.getCny();
         System.out.println(getNowDateTime()+"价格:"+HttpClientUtil.bsv);
+        System.out.println("-----------------BSV价格获取结束-----------------");
     }
 
     /**
@@ -402,5 +410,10 @@ public class PartnerController {
             e.printStackTrace();
         }
         return new MsgConfig("0", "success", null);
+    }
+
+    @RequestMapping(value = "/findByRound")
+    public MsgConfig findByRound() {
+        return new MsgConfig("0", "success", partnerService.findRound());
     }
 }

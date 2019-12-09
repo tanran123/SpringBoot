@@ -122,6 +122,8 @@ public class UserInfo extends CommandEntity implements Serializable {
     private String wxHeadImgUrl;
 
     @Transient
+    private String openId;
+    @Transient
     private String code;
 
     public String getWxHeadImgUrl() {
@@ -374,5 +376,13 @@ public class UserInfo extends CommandEntity implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }

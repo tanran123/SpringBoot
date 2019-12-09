@@ -39,6 +39,8 @@ public interface PartnerDao extends CrudRepository<Partner, Long> {
      */
     List<Partner> findByPartnerUserId(int userId);
 
+    @Query(value = "SELECT * FROM partner ORDER BY RAND() LIMIT 5",nativeQuery = true)
+    List<Partner> findRound();
 
     /**
      * 用过USERID分页查询

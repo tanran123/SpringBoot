@@ -74,8 +74,8 @@ public class PxBuySocket {
     @OnMessage
     public void onMessage(String message, Session session) {
         JSON json = JSON.parseObject(message);
-        int userCode_row = ((JSONObject) json).getInteger("userCode");
-        if (userCode == null) {
+        Integer userCode_row = ((JSONObject) json).getInteger("userCode");
+        if (userCode == null && userCode_row!=null) {
             setUserCode(userCode_row);
         }
         System.out.println("客户端发送的消息：" + session.getId());

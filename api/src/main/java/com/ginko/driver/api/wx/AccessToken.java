@@ -12,12 +12,12 @@ public class AccessToken {
     public static String wxTicket;
 
     public static String InitGetWxToken(){
-        JSONObject j =JSONObject.parseObject(HttpClientUtil.getWxToken().toJSONString());
+        JSONObject j = (JSONObject) HttpClientUtil.getWxToken();
         return j.getString("access_token");
     }
 
     public static String InitgetWxTicket(){
-        JSONObject j =JSONObject.parseObject(HttpClientUtil.getWxTicket(wxToken).toJSONString());
+        JSONObject j = (JSONObject) HttpClientUtil.getWxTicket(wxToken);
         return j.getString("ticket");
     }
 }

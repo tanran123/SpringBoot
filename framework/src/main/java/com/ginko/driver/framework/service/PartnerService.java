@@ -229,4 +229,13 @@ public class PartnerService {
     public int updatePartnerIncome(UserPartner userPartner){
         return userPartnerDao.updatePartnerIncome(userPartner.getPartnerDay(),0,userPartner.getPartnerIncome());
     }
+
+
+    /**
+     * 随机取10条数据
+     * @return
+     */
+    public List<Partner> findRound(){
+        return partnerDao.findRound();
+    }
 }
