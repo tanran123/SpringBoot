@@ -30,7 +30,7 @@ public interface UserPartnerDao extends CrudRepository<UserPartner, Long> {
      */
     Page<UserPartner> findByUserIdAndPartnerStatusAndPaymentStatus(int userId,int partnerStatus,int payment,Pageable pageable);
 
-    UserPartner findByPartnerIdAndUserIdAndPaymentStatus(int partnerId,int userId,int paymentStatus);
+    List<UserPartner> findByPartnerIdAndUserIdAndPaymentStatusOrderByBuyDatetimeDesc(int partnerId,int userId,int paymentStatus);
 
     UserPartner findByOrderId(String orderId);
     /**

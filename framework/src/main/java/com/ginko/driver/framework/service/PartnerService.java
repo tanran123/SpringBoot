@@ -153,8 +153,9 @@ public class PartnerService {
                 else {
                     //如果还是这个用户
                     if (userPartner.getUserId() == partnerQuery.getLockUserId()) {
-                        UserPartner alreadyUp = userPartnerDao.findByPartnerIdAndUserIdAndPaymentStatus(
-                                userPartner.getPartnerId(), userPartner.getUserId(), 0);
+                        //取第一条
+                        UserPartner alreadyUp = userPartnerDao.findByPartnerIdAndUserIdAndPaymentStatusOrderByBuyDatetimeDesc(
+                                userPartner.getPartnerId(), userPartner.getUserId(), 0).get(0);
                         return new MsgConfig("0", null, alreadyUp);
                     } else {
                         return new MsgConfig("109", "当前合伙人已被锁定，3分钟后若用户未支付，您还有机会", null);
