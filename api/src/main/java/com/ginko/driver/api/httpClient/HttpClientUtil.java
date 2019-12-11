@@ -23,8 +23,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -105,6 +104,46 @@ public class HttpClientUtil {
             }
         }
         return jsonResult;
+    }
+
+
+    /**
+     * 发送get请求
+     *
+     * @param url 路径
+     * @return
+     */
+    public static Map<String, Object> httpGet(String url, String token) {
+        BufferedReader in = null;
+        try {
+            // 定义HttpClient
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            // 实例化HTTP方法
+            HttpGet request = new HttpGet(url);
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(5000)
+                    .setSocketTimeout(5000).build();
+            request.setConfig(requestConfig);
+            request.setHeader("Authorization", token);
+            CloseableHttpResponse response = null;
+            response = httpClient.execute(request);
+            int code = response.getStatusLine().getStatusCode();
+            if (code == 200) {    //请求成功
+                Map<String, Object> mapResult = new HashMap<String, Object>();
+                mapResult.put("isSuccess", true);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                response.getEntity().writeTo(bos);
+                ByteArrayInputStream swapInputStream = new ByteArrayInputStream(bos.toByteArray());
+                mapResult.put("inputStream", swapInputStream);
+                return mapResult;
+            } else {   //
+                System.out.println("状态码：" + code);
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static JSON httpGetForJSON(String url) {
@@ -291,78 +330,6 @@ public class HttpClientUtil {
         return jsonResult;
     }
 
-    /**
-     * get
-     *
-     * @param url 请求地址
-     * @return
-     */
-    public static JSON httpGet(String url, String key) {
-        JSON jsonResult = null;
-        //获取请求参数
-        List<NameValuePair> parame = new ArrayList<NameValuePair>();
-        parame.add(new BasicNameValuePair("参数名", key));
-        // 获取httpclient
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response = null;
-        String parameStr = null;
-        try {
-            parameStr = EntityUtils.toString(new UrlEncodedFormEntity(parame));
-            //拼接参数
-            StringBuffer sb = new StringBuffer();
-            sb.append(url);
-            sb.append("?");
-            sb.append(parameStr);
-            //创建get请求
-            HttpGet httpGet = new HttpGet(sb.toString());
-            // 设置请求和传输超时时间
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setSocketTimeout(2000).setConnectTimeout(2000).build();
-            httpGet.setConfig(requestConfig);
-            // 提交参数发送请求
-            response = httpclient.execute(httpGet);
-
-            // 得到响应信息
-            int statusCode = response.getStatusLine().getStatusCode();
-            // 判断响应信息是否正确
-            if (statusCode != HttpStatus.SC_OK) {
-                // 终止并抛出异常
-                httpGet.abort();
-                throw new RuntimeException("HttpClient,error status code :" + statusCode);
-            }
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                String result = EntityUtils.toString(entity);
-                jsonResult = JSON.parseObject(result);
-            }
-            EntityUtils.consume(entity);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            //关闭所有资源连接
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (httpclient != null) {
-                try {
-                    httpclient.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return jsonResult;
-
-    }
-
 
     public static BigDecimal bsv = new BigDecimal("0.00");
 
@@ -434,20 +401,34 @@ public class HttpClientUtil {
 
 
     public static void main(String[] args) {
-    /*    System.out.println(StringUtils.endsWith(
-                "jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"
-                ,
-                "jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"));
-        System.out.println(Md5Util.encode("jsapi_ticket=kgt8ON7yVITDhtdwci0qeZ8AryuE6I8UQEqqoRwyb82GXijMZfb8hkmMCKkawjh8JXOIL_MwtarfgkLZmcCT6g&noncestr=acb473e1-c20a-499f-b912-b0c28f34e08f&timestamp=1574528153&url=https://www.timesv.com/register/inviteCode=123456789"));
-        System.out.println(new Date().getTime());
-        System.out.println(System.currentTimeMillis()/1000);*/
-//        try {
-//            System.out.println(URLEncoder.encode("https://www.timesv.com/register?inviteCode=1","utf-8"));
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
 
-        JSONObject J = (JSONObject) httpPost("https://www.timesv.com/timesv/user/v1/wechat/bind/status", "{\"openId\":\"123\"}", "123");
-        System.out.println(J);
+        //获取二进制流
+        Map<String, Object> map = httpGet("http://localhost:8081/timesv/files/v1/download?commodityNumber=e62298a8d5404e34b1ff745e040f6208", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzY2Nzk2NjEsImlhdCI6MTU3NjA3NDg2MSwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjEwOH19.eKnGA86BoqMT4VFpFQC4fGUhnNfVCDtP_Q4qxleS54lOTbgUXdZ_VR6QE953PjlX2ngbdY15wZdNg36-_zOneKGs4WgIV9fptqfVZiRjMBsfmBPa85vs7CK_PbQE1wZStJKMgUGVO2Y6UOu35c6UNsjg8XG51i9Y2hT06dJz0DhRe0s7KZgb7U-nnTlNTMjcrZqev3d7dqe78Rfj26K09mtlQsAzdjAqFY7Kc4theQRblQVL55Gbx47dxur9cN-z0RM2sF7wDWWKZOYpNf5elkwXy9Q5WNvOHO4NtPT5tMNwsDNzZceGJ01PSaAcgwtXzZyji1Nw_yZl0ETKb6QNig");
+        ByteArrayInputStream bais = (ByteArrayInputStream) map.get("inputStream");
+        // 缓冲字节输出流
+        BufferedOutputStream bos = null;
+        //新建文件
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(new File("/Users/tran/tmp/123.gif")));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        //写入文件
+        byte[] buffer = new byte[1024];
+        int len;
+        try {
+            while ((len = bais.read(buffer)) != -1) {
+                bos.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            bais.close();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
