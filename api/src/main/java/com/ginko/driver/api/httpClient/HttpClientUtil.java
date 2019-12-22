@@ -206,8 +206,8 @@ public class HttpClientUtil {
         //发送get请求
         HttpGet request = new HttpGet(url);
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(5000)
-                .setSocketTimeout(5000).build();
+                .setConnectTimeout(30000)
+                .setSocketTimeout(30000).build();
         request.setConfig(requestConfig);
         CloseableHttpResponse response = null;
         try {
@@ -341,7 +341,7 @@ public class HttpClientUtil {
     public static BigDecimal getCny() {
 //        JSON j = httpGet("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash-sv&vs_currencies=cny");
 //        Double cny = ((JSONObject) j).getJSONObject("bitcoin-cash-sv").getDouble("cny");
-        JSONArray j = httpGetForArr("https://fxhapi.feixiaohao.com/public/v1/ticker?convert=cny");
+  /*      JSONArray j = httpGetForArr("https://fxhapi.feixiaohao.com/public/v1/ticker?convert=cny");
         BigDecimal cny = new BigDecimal("0.00");
         for (int i = 0; i < j.size(); i++) {
             JSONObject json = (JSONObject) j.get(i);
@@ -349,8 +349,8 @@ public class HttpClientUtil {
             if (type.equals("BSV")) {
                 cny = json.getBigDecimal("price_cny");
             }
-        }
-        return cny;
+        }*/
+        return new BigDecimal("588");
     }
 
     /**
@@ -403,7 +403,7 @@ public class HttpClientUtil {
     public static void main(String[] args) {
 
         //获取二进制流
-        Map<String, Object> map = httpGet("http://localhost:8081/timesv/files/v1/download?commodityNumber=e62298a8d5404e34b1ff745e040f6208", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzY2Nzk2NjEsImlhdCI6MTU3NjA3NDg2MSwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjEwOH19.eKnGA86BoqMT4VFpFQC4fGUhnNfVCDtP_Q4qxleS54lOTbgUXdZ_VR6QE953PjlX2ngbdY15wZdNg36-_zOneKGs4WgIV9fptqfVZiRjMBsfmBPa85vs7CK_PbQE1wZStJKMgUGVO2Y6UOu35c6UNsjg8XG51i9Y2hT06dJz0DhRe0s7KZgb7U-nnTlNTMjcrZqev3d7dqe78Rfj26K09mtlQsAzdjAqFY7Kc4theQRblQVL55Gbx47dxur9cN-z0RM2sF7wDWWKZOYpNf5elkwXy9Q5WNvOHO4NtPT5tMNwsDNzZceGJ01PSaAcgwtXzZyji1Nw_yZl0ETKb6QNig");
+        Map<String, Object> map = httpGet("http://localhost:8080/timesv/files/v1/download?commodityNumber=e62298a8d5404e34b1ff745e040f6208", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzY2Nzk2NjEsImlhdCI6MTU3NjA3NDg2MSwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjEwOH19.eKnGA86BoqMT4VFpFQC4fGUhnNfVCDtP_Q4qxleS54lOTbgUXdZ_VR6QE953PjlX2ngbdY15wZdNg36-_zOneKGs4WgIV9fptqfVZiRjMBsfmBPa85vs7CK_PbQE1wZStJKMgUGVO2Y6UOu35c6UNsjg8XG51i9Y2hT06dJz0DhRe0s7KZgb7U-nnTlNTMjcrZqev3d7dqe78Rfj26K09mtlQsAzdjAqFY7Kc4theQRblQVL55Gbx47dxur9cN-z0RM2sF7wDWWKZOYpNf5elkwXy9Q5WNvOHO4NtPT5tMNwsDNzZceGJ01PSaAcgwtXzZyji1Nw_yZl0ETKb6QNig");
         ByteArrayInputStream bais = (ByteArrayInputStream) map.get("inputStream");
         // 缓冲字节输出流
         BufferedOutputStream bos = null;

@@ -5,6 +5,7 @@ import com.ginko.driver.api.httpClient.HttpClientUtil;
 import com.ginko.driver.api.md5.Md5Util;
 import com.ginko.driver.api.webSocket.CustomerWebSoket;
 import com.ginko.driver.api.wx.AccessToken;
+import com.ginko.driver.common.util.DateTool;
 import com.ginko.driver.framework.entity.WebSocketReturnType;
 import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.tolls.TokenTools;
@@ -12,6 +13,7 @@ import com.ginko.driver.framework.entity.Partner;
 import com.ginko.driver.framework.entity.UserPartner;
 import com.ginko.driver.framework.service.PartnerService;
 import com.ginko.driver.framework.service.UserPartnerService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -300,7 +302,14 @@ public class PartnerController {
     @RequestMapping("/buyPartner")
     public MsgConfig buyPartner(@RequestBody UserPartner userPartner) {
         Partner partner = partnerService.findByPartnerId(userPartner.getPartnerId());
-        userPartner.setBuyPrice(partner.getPrice().multiply(new BigDecimal("1.1")));
+        //判断是否购买今日合伙人
+        String date = DateTool.getCurrentDate();
+        if (StringUtils.equals(date,partner.getPartnerDay())){
+            userPartner.setBuyPrice(partner.getPrice());
+        }
+        else{
+            userPartner.setBuyPrice(partner.getPrice().multiply(new BigDecimal("1.1")));
+        }
         userPartner.setBuyBsvPrice(partner.getBsvPrice());
         return partnerService.buyPartner(userPartner);
     }
@@ -331,7 +340,16 @@ public class PartnerController {
 
 
     @RequestMapping("/updatePartnerSellStatus")
-    public MsgConfig updatePartnerSellStatus(@RequestBody Partner partner) {
+    public MsgConfig updatePartnerSellStatus(@RequestBody Partner partner, HttpServletRequest request) {
+        try {
+            Integer userId = TokenTools.getUserIdFromToken(request.getHeader("Authorization"));
+            Partner partner1 = partnerService.findByPartnerId(partner.getPartnerId());
+            if (userId != partner1.getPartnerUserId()) {
+                return new MsgConfig("401", "权限不足", null);
+            }
+        } catch (Exception e) {
+            return new MsgConfig("401", "权限不足", null);
+        }
         BigDecimal cny = HttpClientUtil.bsv;
         partner.setBsvPrice(partner.getPrice().divide(cny, 8, RoundingMode.HALF_UP));
         return new MsgConfig("0", null,
