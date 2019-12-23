@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @Author: tran
  * @Description:
@@ -15,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ErrorController {
 
     @RequestMapping(value = "/401",method = RequestMethod.POST)
-    public MsgConfig post404(){
+    public MsgConfig post404(HttpServletResponse response){
+        response.setStatus(401);
         return new MsgConfig("401", MsgEnum.NOROLEAUTH.getDesc(), null);
     }
 }

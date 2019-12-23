@@ -14,6 +14,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -330,6 +331,65 @@ public class HttpClientUtil {
         return jsonResult;
     }
 
+    public static JSON httpPost(String url, String jsonParam) {
+        return httpPost(url, jsonParam,false);
+    }
+    public static JSON httpPost(String url, String jsonParam, boolean noNeedResponse) {
+        //post请求返回结果
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        JSON jsonResult = null;
+        HttpPost method = new HttpPost(url);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(15000)
+                .setSocketTimeout(15000).build();
+        method.setConfig(requestConfig);
+        CloseableHttpResponse result = null;
+        method.setHeader("Content-type", "application/json");
+        try {
+            if (null != jsonParam) {
+                //解决中文乱码问题
+                StringEntity entity = new StringEntity(jsonParam, ContentType.APPLICATION_JSON);
+                method.setEntity(entity);
+            }
+            result = httpClient.execute(method);
+            url = URLDecoder.decode(url, "UTF-8");
+            /**请求发送成功，并得到响应**/
+            if (result.getStatusLine().getStatusCode() == 200) {
+                String str = "";
+                try {
+                    /**读取服务器返回过来的json字符串数据**/
+                    str = EntityUtils.toString(result.getEntity());
+                    if (noNeedResponse) {
+                        return null;
+                    }
+                    /**把json字符串转换成json对象**/
+                    jsonResult = JSON.parseObject(str);
+                } catch (Exception e) {
+                    logger.error("post请求提交失败:" + url, e);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("post请求提交失败:" + url, e);
+        } finally {
+            //关闭所有资源连接
+            if (result != null) {
+                try {
+                    result.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return jsonResult;
+    }
+
 
     public static BigDecimal bsv = new BigDecimal("0.00");
 
@@ -401,8 +461,7 @@ public class HttpClientUtil {
 
 
     public static void main(String[] args) {
-
-        //获取二进制流
+      /*  //获取二进制流
         Map<String, Object> map = httpGet("http://localhost:8080/timesv/files/v1/download?commodityNumber=e62298a8d5404e34b1ff745e040f6208", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzY2Nzk2NjEsImlhdCI6MTU3NjA3NDg2MSwiaXNzIjoidGltZXN2IiwiZGF0YSI6eyJ1c2VySWQiOjEwOH19.eKnGA86BoqMT4VFpFQC4fGUhnNfVCDtP_Q4qxleS54lOTbgUXdZ_VR6QE953PjlX2ngbdY15wZdNg36-_zOneKGs4WgIV9fptqfVZiRjMBsfmBPa85vs7CK_PbQE1wZStJKMgUGVO2Y6UOu35c6UNsjg8XG51i9Y2hT06dJz0DhRe0s7KZgb7U-nnTlNTMjcrZqev3d7dqe78Rfj26K09mtlQsAzdjAqFY7Kc4theQRblQVL55Gbx47dxur9cN-z0RM2sF7wDWWKZOYpNf5elkwXy9Q5WNvOHO4NtPT5tMNwsDNzZceGJ01PSaAcgwtXzZyji1Nw_yZl0ETKb6QNig");
         ByteArrayInputStream bais = (ByteArrayInputStream) map.get("inputStream");
         // 缓冲字节输出流
@@ -428,7 +487,8 @@ public class HttpClientUtil {
             bos.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
+        }*/
+        JSONObject json = (JSONObject)httpPost("https://www.ddpurse.com/openapi/access_token","{\"app_id\":\"a55c1e2b49bab9f00cea89a3266dc8d3\",\"secret\":\"babe5bc5f69e93fd619cd5aec22f028b\",\"code\":\"fdae47e614e81f3e8cc27fffbdfd561cc8fa5394410c7bc186301f3b7612a06b\"}");
+      System.out.println(json.getString("code"));
     }
 }

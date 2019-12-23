@@ -92,6 +92,27 @@ public class UserController {
         }
     }
 
+    @RequestMapping("dotWalletLogin")
+    public MsgConfig dotWalletLogin(@RequestBody UserInfo userInfo){
+        JSONObject jsonObject = (JSONObject) HttpClientUtil.httpPost("https://www.ddpurse.com/openapi/access_token","{\"app_id\":\"a55c1e2b49bab9f00cea89a3266dc8d3\",\"secret\":\"babe5bc5f69e93fd619cd5aec22f028b\",\"code\":\""+userInfo.getCode()+"\"}");
+        //判断是否code
+        if (jsonObject.getInteger("code")==0){
+            //获取access_token
+            JSONObject jsonObject1 = jsonObject.getJSONObject("data");
+            String accessToken = jsonObject1.getString("access_token");
+            JSONObject dotWalletInfo = HttpClientUtil.httpGet("https://www.ddpurse.com/openapi/get_user_info?access_token="+accessToken);
+            if (dotWalletInfo.getInteger("code")==0){
+                return new MsgConfig("0",null,dotWalletInfo.getJSONObject("data"));
+            }
+            else{
+                return new MsgConfig(dotWalletInfo.getString("code"),dotWalletInfo.getString("msg"),null);
+            }
+        }
+        else{
+            return new MsgConfig(jsonObject.getString("code"),jsonObject.getString("msg"),null);
+        }
+    }
+
     public static void main(String[] args) throws UnsupportedEncodingException {
         String url = "{\"country\":\"\",\"province\":\"\",\"city\":\"\",\"openid\":\"ojabuwxtLiO5uarde57Umx1uzu1g\",\"sex\":1,\"nickname\":\"è°\u00ADç\\u0084¶\",\"headimgurl\":\"http://thirdwx.qlogo.cn/mmopen/vi_32/8m96uYNX9WfhN9hicLe24VCgN5EE1ypx97aLXicD5DSkQIVzjjz87C69cpCx2MgUHzdwzQZVGKmAHNPibAXBHmicsg/132\",\"language\":\"zh_CN\",\"privilege\":[]}";
         System.out.println(  URLEncoder.encode("è°\u00ADç\\u0084¶","utf-8"));
