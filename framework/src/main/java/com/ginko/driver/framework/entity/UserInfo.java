@@ -121,6 +121,16 @@ public class UserInfo extends CommandEntity implements Serializable {
 
     private String wxHeadImgUrl;
 
+    @JsonIgnore
+    private String dotWalletOpenId;
+
+    private String dotWalletHeadImg;
+
+    private String dotWalletNickName;
+
+    private String dotWalletAddress;
+
+
     @Transient
     private String openId;
     @Transient
@@ -384,5 +394,37 @@ public class UserInfo extends CommandEntity implements Serializable {
 
     public void setOpenId(String openId) {
         this.openId = openId;
+    }
+
+    public String getDotWalletOpenId() {
+        return dotWalletOpenId;
+    }
+
+    public void setDotWalletOpenId(String dotWalletOpenId) {
+        this.dotWalletOpenId = dotWalletOpenId;
+    }
+
+    public String getDotWalletHeadImg() {
+        return dotWalletHeadImg;
+    }
+
+    public void setDotWalletHeadImg(String dotWalletHeadImg) {
+        this.dotWalletHeadImg = dotWalletHeadImg;
+    }
+
+    public String getDotWalletNickName() {
+        return dotWalletNickName;
+    }
+
+    public void setDotWalletNickName(String dotWalletNickName) {
+        this.dotWalletNickName = dotWalletNickName;
+    }
+
+    public String getDotWalletAddress() {
+        return dotWalletAddress;
+    }
+
+    public void setDotWalletAddress(String dotWalletAddress) {
+        this.dotWalletAddress = dotWalletAddress;
     }
 }
