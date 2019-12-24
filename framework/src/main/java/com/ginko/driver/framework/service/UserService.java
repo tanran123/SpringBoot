@@ -30,7 +30,12 @@ public class UserService {
     }
 
 
-    public UserInfo findByOpenId(UserInfo userInfo){
-        return userInfoDao.findByWxOpenId(userInfo.getWxOpenId());
+    public UserInfo findByOpenId(String openId){
+        return userInfoDao.findByWxOpenId(openId);
     }
+
+    public UserInfo findByDotWalletOpenId(String openId){
+        return userInfoDao.findByDotWalletOpenId(openId);
+    }
+
 }

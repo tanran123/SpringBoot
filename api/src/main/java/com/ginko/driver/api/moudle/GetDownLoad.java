@@ -5,5 +5,4 @@ public class GetDownLoad {
 
     private String fileName;
 
-
 }

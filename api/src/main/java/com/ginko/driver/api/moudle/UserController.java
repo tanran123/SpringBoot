@@ -8,6 +8,7 @@ import com.ginko.driver.common.entity.MsgConfig;
 import com.ginko.driver.common.tolls.TokenTools;
 import com.ginko.driver.framework.entity.UserInfo;
 import com.ginko.driver.framework.service.UserService;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,18 +74,27 @@ public class UserController {
         String openId = jsonpObject.getString("openid");
         userInfo.setWxOpenId(openId);
         if (openId!=null){
-            JSONObject json = (JSONObject)HttpClientUtil.httpPost("https://www.timesv.com/timesv/user/v1/wechat/bind/status","{\"openId\":\""+openId+"\"}","123");
-            if (json.getInteger("responseCode")==210){
+            UserInfo userInfo1 = userService.findByOpenId(openId);
+            if (userInfo1!=null){
+                JSONObject json = (JSONObject)HttpClientUtil.httpPost("https://www.timesv.com/timesv/user/v1/wechat/bind/status","{\"openId\":\""+openId+"\"}","123");
+                if (json.getInteger("responseCode")==210){
+                    String token = jsonpObject.getString("access_token");
+                    JSON jsonInfo = HttpClientUtil.httpGetForJSON("https://api.weixin.qq.com/sns/userinfo?access_token="+token+"&openid="+openId+"&lang=zh_CN");
+                    System.out.println("--------------------------\n"+jsonInfo+"\n--------------------------\n");
+                    return new MsgConfig("102","用户未注册",jsonInfo);
+                }
+                else if (json.getInteger("responseCode")==0){
+                    return new MsgConfig("101","OK",json.getJSONObject("data"));
+                }
+                else{
+                    return new MsgConfig("102","用户未注册",openId);
+                }
+            }
+            else{
                 String token = jsonpObject.getString("access_token");
                 JSON jsonInfo = HttpClientUtil.httpGetForJSON("https://api.weixin.qq.com/sns/userinfo?access_token="+token+"&openid="+openId+"&lang=zh_CN");
                 System.out.println("--------------------------\n"+jsonInfo+"\n--------------------------\n");
                 return new MsgConfig("102","用户未注册",jsonInfo);
-            }
-            else if (json.getInteger("responseCode")==0){
-                return new MsgConfig("101","OK",json.getJSONObject("data"));
-            }
-            else{
-                return new MsgConfig("102","用户未注册",openId);
             }
         }
         else{
@@ -102,7 +112,16 @@ public class UserController {
             String accessToken = jsonObject1.getString("access_token");
             JSONObject dotWalletInfo = HttpClientUtil.httpGet("https://www.ddpurse.com/openapi/get_user_info?access_token="+accessToken);
             if (dotWalletInfo.getInteger("code")==0){
-                return new MsgConfig("0",null,dotWalletInfo.getJSONObject("data"));
+                UserInfo userInfo1 = userService.findByDotWalletOpenId(dotWalletInfo.getJSONObject("data").getString("user_open_id"));
+                 //查看是否存在改用户
+                 if (userInfo1==null){
+                     return new MsgConfig("101","请绑定手机号",dotWalletInfo.getJSONObject("data"));
+                 }
+                 //不存在
+                 else{
+                     //todo调用生成TOKEN接口
+                     return new MsgConfig("101","请绑定手机号",dotWalletInfo.getJSONObject("data"));
+                 }
             }
             else{
                 return new MsgConfig(dotWalletInfo.getString("code"),dotWalletInfo.getString("msg"),null);

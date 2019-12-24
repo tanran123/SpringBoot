@@ -18,4 +18,6 @@ public interface UserInfoDao extends CrudRepository<UserInfo, Long> {
 
 
     UserInfo findByWxOpenId(String openId);
+
+    UserInfo findByDotWalletOpenId(String openId);
 }
